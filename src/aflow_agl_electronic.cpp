@@ -49,6 +49,9 @@ namespace AGL_functions {
     AGL_dos_pressures AGL_dos_pressure;
     // [OBSOLETE] vector<AGL_dos_pressures> AGL_dos_pressure_list;
     double sumdos, sumidos;
+    vector<string> vlock_variants_aelagl; //CO20240409
+    aurostd::string2tokens(DEFAULT_FILE_AFLOWLOCK_VARIANTS_AELAGL,vlock_variants_aelagl,","); //CO20240409
+    string FileLockName=""; //CO20240409
     for(uint idVaspRun = 0; idVaspRun < vaspRuns.size(); idVaspRun++) {
       skipdir = false;
       aurostd::StringstreamClean(aus);
@@ -106,13 +109,25 @@ namespace AGL_functions {
       } else if( aurostd::FileExist(dirrunname.at(idVaspRun) + ".tar.xz") ) {
         aurostd::execute( string("tar -xf ") + dirrunname.at(idVaspRun) + ".tar.xz" );
       } // Extract all...
+      
+      for(uint ilock=0;ilock<vlock_variants_aelagl.size();ilock++){ //CO20240409
+        //CO20240409 - it seems vaspRuns[idVaspRun].Directory is an OBSOLETE setting, we check both anyway
+        if(aurostd::FileExist(aurostd::CleanFileName(vaspRuns[idVaspRun].Directory+"/"+vlock_variants_aelagl[ilock]))){FileLockName=vlock_variants_aelagl[ilock];break;}  //CO20240409
+        if(aurostd::FileExist(aurostd::CleanFileName(dirrunname.at(idVaspRun)+"/"+vlock_variants_aelagl[ilock]))){FileLockName=vlock_variants_aelagl[ilock];break;}  //CO20240409
+      } //CO20240409
 
       // If the LOCK file is missing, then it is probably a corrupted run
       // Do not accept it and wait for the new run
       if( !aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/"+_AFLOWLOCK_ )  && !aurostd::FileExist( dirrunname.at(idVaspRun) + "/"+_AFLOWLOCK_ ) &&
           !(((XHOST.ARUN_POSTPROCESS || AGL_data.postprocess) &&
-              ((aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/agl.LOCK")) || (aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/LOCK")) ||
-               (aurostd::FileExist( dirrunname.at(idVaspRun) + "/agl.LOCK")) || (aurostd::FileExist( dirrunname.at(idVaspRun) + "/LOCK")))))) {
+              (
+               (aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/"+FileLockName)) ||  //CO20240409
+               //[CO20240409 - OBSOLETE](aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/agl.LOCK")) || 
+               (aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/"+_AFLOWLOCK_)) ||
+               (aurostd::FileExist( dirrunname.at(idVaspRun) + "/"+FileLockName)) ||  //CO20240409
+               //[CO20240409 - OBSOLETE](aurostd::FileExist( dirrunname.at(idVaspRun) + "/agl.LOCK")) || 
+               (aurostd::FileExist( dirrunname.at(idVaspRun) + "/"+_AFLOWLOCK_))
+               )))) {
         aurostd::StringstreamClean(aus);
         aus <<  _AGLSTR_WARNING_ + "The " << _AFLOWLOCK_ << " file in " << vaspRuns.at(idVaspRun).Directory << " directory is missing." << endl;
         aurostd::PrintMessageStream(FileMESSAGE,aus,XHOST.QUIET);

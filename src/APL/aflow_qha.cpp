@@ -3624,7 +3624,8 @@ namespace apl{
     string stmp="";
     if (!AflowInName.empty()) vaflowins.push_back(AflowInName);
     if (!_AFLOWIN_.empty()) vaflowins.push_back(_AFLOWIN_);
-    vaflowins.push_back(_AFLOWIN_QHA_DEFAULT_);
+    //[CO20240407 - OBSOLETE]vaflowins.push_back(_AFLOWIN_QHA_DEFAULT_);
+    aurostd::string2tokensAdd(DEFAULT_FILE_AFLOWIN_VARIANTS_QHA,vaflowins,",");  //CO20240406
 
     string aflowin_name = "", aflowin = "", fullpath_aflowin_name = "";
     for (uint i=0; i<vaflowins.size(); i++){

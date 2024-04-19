@@ -1737,13 +1737,23 @@ namespace KBIN {
     }   
     aurostd::StringSubst(directory,"/EIGENVAL","");      // so it is easier to search
 
+    vector<string> vaflowin_variants_aelagl;  //CO20240407
+    aurostd::string2tokens(DEFAULT_FILE_AFLOWIN_VARIANTS_AELAGL,vaflowin_variants_aelagl,",");  //CO20240407
+    bool exists_aflowin_aelagl=false; //CO20240407 - for the if statement below
+    for(uint i=0;i<vaflowin_variants_aelagl.size();i++){
+      for(uint iext=1;iext<XHOST.vext.size();iext++) { // SKIP uncompressed
+        aurostd::StringSubst(directory,"/"+vaflowin_variants_aelagl[i]+XHOST.vext[iext],"");  // so it is easier to search
+      }
+      aurostd::StringSubst(directory,"/"+vaflowin_variants_aelagl[i],"");  // so it is easier to search
+      exists_aflowin_aelagl=(exists_aflowin_aelagl || aurostd::FileExist(string(directory+"/"+vaflowin_variants_aelagl[i])));  //CO20240407
+    }
+    //[CO20240407 - OBSOLETE]aurostd::StringSubst(directory,"/"+_AFLOWIN_AGL_DEFAULT_,"");  // so it is easier to search
+    //[CO20240407 - OBSOLETE]aurostd::StringSubst(directory,"/"+_AFLOWIN_AEL_DEFAULT_,"");  // so it is easier to search    
     for(uint iext=1;iext<XHOST.vext.size();iext++) { // SKIP uncompressed
-      aurostd::StringSubst(directory,"/"+_AFLOWIN_AGL_DEFAULT_+XHOST.vext[iext],"");  // so it is easier to search
-      aurostd::StringSubst(directory,"/"+_AFLOWIN_AEL_DEFAULT_+XHOST.vext[iext],"");  // so it is easier to search    
+      //[CO20240407 - OBSOLETE]aurostd::StringSubst(directory,"/"+_AFLOWIN_AGL_DEFAULT_+XHOST.vext[iext],"");  // so it is easier to search
+      //[CO20240407 - OBSOLETE]aurostd::StringSubst(directory,"/"+_AFLOWIN_AEL_DEFAULT_+XHOST.vext[iext],"");  // so it is easier to search    
       aurostd::StringSubst(directory,"/aflow.in"+XHOST.vext[iext],"");      // so it is easier to search
     }   
-    aurostd::StringSubst(directory,"/"+_AFLOWIN_AGL_DEFAULT_,"");  // so it is easier to search
-    aurostd::StringSubst(directory,"/"+_AFLOWIN_AEL_DEFAULT_,"");  // so it is easier to search    
     aurostd::StringSubst(directory,"/aflow.in","");      // so it is easier to search
 
     if(!aurostd::FileExist(string(directory+"/"+"NOCLEAN")) &&
@@ -1759,8 +1769,10 @@ namespace KBIN {
         !aurostd::FileExist(string(directory+"/"+"review.tex"))) {
       if(aurostd::FileExist(string(directory+"/"+_AFLOWIN_)) ||    // normal aflow.in or specified it
           aurostd::FileExist(string(directory+"/aflow.in")) ||      // normal aflow.in
-          aurostd::FileExist(string(directory+"/"+_AFLOWIN_AGL_DEFAULT_)) ||  // normal agl_aflow.in
-          aurostd::FileExist(string(directory+"/"+_AFLOWIN_AEL_DEFAULT_)) ) { // normal ael_aflow.in
+          exists_aflowin_aelagl  //CO20240407
+          //[CO20240407 - OBSOLETE]aurostd::FileExist(string(directory+"/"+_AFLOWIN_AGL_DEFAULT_)) ||  // normal agl_aflow.in
+          //[CO20240407 - OBSOLETE]aurostd::FileExist(string(directory+"/"+_AFLOWIN_AEL_DEFAULT_)) 
+          ) { // normal ael_aflow.in
 
         //CO20210716 - save contcar
         bool save_contcar=opts_clean.flag("SAVE_CONTCAR");
@@ -1781,12 +1793,18 @@ namespace KBIN {
         vector<string> vfiles;  //not only files, includes EVERYTHING
         string file_path;
         aurostd::DirectoryLS(directory,vfiles);
+        bool found_aflowin_aelagl=false;  //CO20240407
         for(uint i=0;i<vfiles.size();i++) {
           file_path=directory + "/" + vfiles[i];
           if(aurostd::substring2bool(vfiles[i],_AFLOWIN_)){continue;}
           if(aurostd::substring2bool(vfiles[i],"aflow.in")){continue;}
-          if(aurostd::substring2bool(vfiles[i],_AFLOWIN_AGL_DEFAULT_)){continue;}
-          if(aurostd::substring2bool(vfiles[i],_AFLOWIN_AEL_DEFAULT_)){continue;}
+          found_aflowin_aelagl=false; //CO20240407
+          for(uint j=0;j<vaflowin_variants_aelagl.size();j++){  //CO20240407
+            if(aurostd::substring2bool(vfiles[i],vaflowin_variants_aelagl[j])){found_aflowin_aelagl=true;break;}
+          }
+          if(found_aflowin_aelagl){continue;}
+          //[CO20240407 - OBSOLETE]if(aurostd::substring2bool(vfiles[i],_AFLOWIN_AGL_DEFAULT_)){continue;}
+          //[CO20240407 - OBSOLETE]if(aurostd::substring2bool(vfiles[i],_AFLOWIN_AEL_DEFAULT_)){continue;}
           if(aurostd::substring2bool(vfiles[i],DEFAULT_AFLOW_FROZSL_INPUT_OUT)){continue;}
           if(aurostd::IsDirectory(file_path)){                 
             if(aurostd::substring2bool(vfiles[i],KBIN_SUBDIRECTORIES)){ // only directories we don't ignore

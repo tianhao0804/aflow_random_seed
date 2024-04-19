@@ -93,7 +93,8 @@ namespace aflowlib {  //CO20210302
     m_initialized=(!m_dir.empty());
 
     vector<string> vaflowins,vLOCKs;
-    aurostd::string2tokens("aflow.in,"+_AFLOWIN_AGL_DEFAULT_+",",vaflowins,",");
+    //[CO20240407 - OBSOLETE]aurostd::string2tokens("aflow.in,"+_AFLOWIN_AGL_DEFAULT_+",",vaflowins,",");
+    aurostd::string2tokens("aflow.in,"+DEFAULT_FILE_AFLOWIN_VARIANTS_AELAGL+",",vaflowins,","); //CO20240407
     return true;
   }
 
@@ -7731,8 +7732,19 @@ namespace aflowlib {
           aurostd::RemoveFile(directory_LIB+"/AEL_energy_structures.json"+XHOST.vext.at(iext));
         }
         // CORMAC FIX BELOW I NEED TO COMMENT TO RUN THE _AFLOWIN_AGL_DEFAULT_ containing only statics.
-        FileLockName = "agl.LOCK";  //CO20210204 - reset from before
-        if(aurostd::EFileExist(directory_LIB+"/"+FileLockName,stmp)&&aurostd::IsCompressed(stmp)){aurostd::UncompressFile(stmp);} //CO20210204 - fix LOCK.xz
+        //CO20240406 START - fixing for different variants
+        vector<string> vlock_variants_aelagl;
+        aurostd::string2tokens(DEFAULT_FILE_AFLOWLOCK_VARIANTS_AELAGL,vlock_variants_aelagl,",");
+        FileLockName = "";  //CO20210204 - reset from before
+        for(uint ilock=0;ilock<vlock_variants_aelagl.size();ilock++){
+          if(aurostd::EFileExist(aurostd::CleanFileName(directory_LIB+"/"+vlock_variants_aelagl[ilock]),stmp)){
+            if(aurostd::IsCompressed(stmp)){aurostd::UncompressFile(stmp);}
+            FileLockName=vlock_variants_aelagl[ilock];
+            break;
+          }
+        }
+        //CO20240406 STOP - fixing for different variants
+        //[CO20210204 - OBSOLETE]if(aurostd::EFileExist(directory_LIB+"/"+FileLockName,stmp)&&aurostd::IsCompressed(stmp)){aurostd::UncompressFile(stmp);} //CO20210204 - fix LOCK.xz
         //[CO20210204 - OBSOLETE, force it to be agl.LOCK]if(aurostd::FileExist(directory_LIB+"/agl.LOCK")) {
         //[CO20210204 - OBSOLETE, force it to be agl.LOCK]  // [OBSOLETE] aurostd::file2file(directory_LIB+"/agl.LOCK",directory_LIB+"/agl.LOCK.run");   // LINK
         //[CO20210204 - OBSOLETE, force it to be agl.LOCK]  // [OBSOLETE] aurostd::CopyFile(directory_LIB+"/agl.LOCK",directory_LIB+"/agl.LOCK.run");   // LINK
@@ -7892,7 +7904,13 @@ namespace aflowlib {
           }
         }
         if(aurostd::FileExist(directory_LIB+"/"+_AFLOWLOCK_)){
-          aurostd::file2file(directory_LIB+"/"+_AFLOWLOCK_,directory_LIB+"/"+_AFLOWLOCK_+".run"); //keep original LOCK
+          if(aurostd::FileExist(aurostd::CleanFileName(directory_LIB+"/"+_AFLOWLOCK_+".run"))){ //CO20240409
+            //CO20240409 - if it exists, then we are running this directory again and we want to keep the original LOCK.run
+            //remove the new LOCK so the rest of the algorithm can proceed
+            aurostd::RemoveFile(aurostd::CleanFileName(directory_LIB+"/"+_AFLOWLOCK_)); //CO20240409
+          }else{
+            aurostd::file2file(directory_LIB+"/"+_AFLOWLOCK_,directory_LIB+"/"+_AFLOWLOCK_+".run"); //keep original LOCK
+          }
         }
         KBIN::RUN_Directory(aflags);
       }

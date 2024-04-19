@@ -407,7 +407,7 @@ namespace aflowlib {
           throw aurostd::xerror(__AFLOW_FILE__, __AFLOW_FUNC__, message_error, _FILE_ERROR_);
         }
       } else {
-        if (LDEBUG) std::cerr << __AFLOW_FUNC__ << " No old datbase found." << std::endl;
+        if (LDEBUG) std::cerr << __AFLOW_FUNC__ << " No old database found." << std::endl;
         ncols_old = 0;
         nentries_old = 0;
       }
@@ -418,22 +418,24 @@ namespace aflowlib {
       }
 
       if (nentries_tmp < nentries_old) {
-        message_error << "The rebuild process resulted in less entries"
-          << " than in the current database. To prevent accidental"
+        message_error << "The rebuild process resulted in fewer entries (" << nentries_tmp << ")"
+          << " than in the current database (" << nentries_old << "). To prevent accidental"
           << " data loss, the temporary database will not be copied."
           << " Rerun as aflow --rebuild_database if the database should"
           << " be updated regardless. The temporary database file will be"
           << " kept to allow debugging.";
+        pflow::logger(__AFLOW_FILE__, __AFLOW_FUNC__, message_error, *p_FileMESSAGE, *p_oss); //CO20240409
         keep = true;
         copied = false;
         found_error = true;
       } else if (ncols_tmp < ncols_old) {
-        message_error << "The rebuild process resulted in less properties"
-          << " than in the current database. To prevent accidental"
+        message_error << "The rebuild process resulted in fewer properties (" << ncols_tmp << ")"
+          << " than in the current database (" << ncols_old << "). To prevent accidental"
           << " data loss, the temporary database will not be copied."
           << " Rerun as aflow --rebuild_database if the database should"
           << " be updated regardless. The temporary database file will be"
           << " kept to allow debugging.";
+        pflow::logger(__AFLOW_FILE__, __AFLOW_FUNC__, message_error, *p_FileMESSAGE, *p_oss); //CO20240409
         keep = true;
         copied = false;
         found_error = true;
@@ -443,6 +445,14 @@ namespace aflowlib {
       }
       message << "Database file " << (copied?"successfully":"not") << " copied.";
       pflow::logger(__AFLOW_FILE__, __AFLOW_FUNC__, message, *p_FileMESSAGE, *p_oss);
+      if(nentries_tmp > nentries_old){
+        message << (nentries_tmp-nentries_old) << " new entries were added to the database." << endl;
+        pflow::logger(__AFLOW_FILE__, __AFLOW_FUNC__, message, *p_FileMESSAGE, *p_oss); //CO20240409
+      }
+      if(ncols_tmp > ncols_old){
+        message << (ncols_tmp-ncols_old) << " new properties were added to the database." << endl;
+        pflow::logger(__AFLOW_FILE__, __AFLOW_FUNC__, message, *p_FileMESSAGE, *p_oss); //CO20240409
+      }
     }
     if (!found_error && !keep) {
       aurostd::RemoveFile(tmp_file);
