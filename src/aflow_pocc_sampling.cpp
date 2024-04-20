@@ -61,8 +61,8 @@ namespace pocc {
          double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0);
          if(LDEBUG){
              cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
-             cerr <<  "This is first random seed sampling for unique configuration calculations" << endl;
-             cerr <<  "Random seed sampling rate is: " << 100*sample_rate << "%" << endl;
+             cerr << __AFLOW_FUNC__ << "This is first random seed sampling for unique configuration calculations" << endl;
+             cerr << __AFLOW_FUNC__ << "Random seed sampling rate is: " << 100*sample_rate << "%" << endl;
          }
          srand(123); //initial random seed sampling
          size_t sample_config_count = static_cast<size_t>(types_config_permutations_count * sample_rate); // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
@@ -80,7 +80,7 @@ namespace pocc {
             //for(size_t i=0; i< sample_config_count; i++){
             cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
             for(size_t i=0; i< selected_site_config_indices.size(); i++){
-                cerr << "Selected permutation configurations in each derivative superlattice: C" << selected_site_config_indices[i] << endl;
+                cerr << __AFLOW_FUNC__ << "Selected permutation configurations in each derivative superlattice: C" << selected_site_config_indices[i] << endl;
             }
          }
          //cerr << "YL_test: " << "sample_config_count" <<  sample_config_count << endl;
@@ -113,8 +113,8 @@ namespace pocc {
         }
         if(LDEBUG){
             cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
-            cerr << " This is second random seed sampling for DFT calculations" << endl;
-            cerr << " Random seed sampling rate is: " << 100*sample_rate << "%" << endl;
+            cerr << __AFLOW_FUNC__ << " This is second random seed sampling for DFT calculations" << endl;
+            cerr << __AFLOW_FUNC__ << " Random seed sampling rate is: " << 100*sample_rate << "%" << endl;
         } 
         std::list<pocc::POccSuperCellSet> selected_random_sampling_supercell_sets;
         for(unsigned long long int i=0; i<hnf_count; i++){ // loop for each superlattice to generate the sample index for each superlattice
@@ -143,7 +143,7 @@ namespace pocc {
                 if(LDEBUG){
                    pocc::POccSuperCell pscs=(*it).getSuperCell();
                    cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
-                   cerr << "Second sampling is: " << "H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;
+                   cerr << __AFLOW_FUNC__ << "Second sampling is: " << "H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;
                 }
             }
              //for(size_t i=0; i< sample_config_count; i++){
