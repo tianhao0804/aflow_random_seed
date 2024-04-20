@@ -66,34 +66,34 @@ namespace pocc {
          }
          srand(123); //initial random seed sampling
          size_t sample_config_count = static_cast<size_t>(types_config_permutations_count * sample_rate); // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
-         //cerr << "YL_test:" << "aflow_pocc_random_seed: " << "sample_config_count" << sample_config_count << endl;
+         //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "sample_config_count" << sample_config_count << endl;
          std::unordered_set<unsigned long long int> selected_site_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
          while(selected_site_config_indices_set.size() < sample_config_count) {
              unsigned long long int index = rand() % types_config_permutations_count; //select permuation decoration configuration index
              selected_site_config_indices_set.insert(index);
          }
          std::vector<unsigned long long int> selected_site_config_indices(selected_site_config_indices_set.begin(), selected_site_config_indices_set.end());
-         //cerr << "YL_test: " << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
+         //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
          sort(selected_site_config_indices.begin(), selected_site_config_indices.end());//set selected_indices to save sorted indices
-         //cerr << "YL_test: " << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
+         //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
          if(LDEBUG){
             //for(size_t i=0; i< sample_config_count; i++){
             cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
             for(size_t i=0; i< selected_site_config_indices.size(); i++){
                 cerr << __AFLOW_FUNC__ << "Selected permutation configurations in each derivative superlattice: C" << selected_site_config_indices[i] << endl;
+         //cerr << __AFLOW_FUNC__ << "sample_config_count" <<  sample_config_count << endl;
+         //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
             }
          }
-         //cerr << "YL_test: " << "sample_config_count" <<  sample_config_count << endl;
-         //cerr << "YL_test: " << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
          std::vector<unsigned long long int> selected_indices_set;
          for(size_t i = 0; i < hnf_count; i++){
              for(size_t j : selected_site_config_indices){
                  selected_indices_set.push_back(i * types_config_permutations_count + j);
-                 //cerr << "YL_test:" << "aflow_pocc_random_seed: " << "selected_indices_set.size: " << selected_indices_set.size() << endl;
-                 //cerr << "YL_test:" << "aflow_pocc_random_seed: " << "i_j" << i << j  << endl;
+                 //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_indices_set.size: " << selected_indices_set.size() << endl;
+                 //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "i_j" << i << j  << endl;
              }
          }
-         //cerr << "YL_test: " << "aflow_pocc_random_seed: " << "size of selected_indices_set" << selected_indices_set.size() << endl;
+         //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "size of selected_indices_set" << selected_indices_set.size() << endl;
          return selected_indices_set;
     }
     
@@ -105,11 +105,11 @@ namespace pocc {
             std::list<pocc::POccSuperCellSet>::iterator it = l_supercell_sets.begin();
             std::advance(it,i);
             pocc::POccSuperCell pscs=(*it).getSuperCell();
-            //cerr << "YL_test: " << "hnf_index: " << pscs.m_hnf_index << endl;
-            //cerr << "YL_test: " << "hnf_index: " <<  pscs.m_hnf_index << "hnf_unique_num: " << ihnf_unique_supercell_num[pscs.m_hnf_index] << endl;
+            //cerr << __AFLOW_FUNC__ << "hnf_index: " << pscs.m_hnf_index << endl;
+            //cerr << __AFLOW_FUNC__ << "hnf_index: " <<  pscs.m_hnf_index << "hnf_unique_num: " << ihnf_unique_supercell_num[pscs.m_hnf_index] << endl;
             ihnf_unique_supercell_num[pscs.m_hnf_index]++; // calculate unique decoration configurations for each superlattices and saved in ihnf_unique_supercell_num
-            //cerr << "YL_test: " << "hnf_index: " <<  psc.m_hnf_index << "hnf_unique_num: " << ihnf_unique_supercell_num[psc.m_hnf_index] << endl;
-            //cerr << "YL_test: " << "H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;
+            //cerr << __AFLOW_FUNC__ << "hnf_index: " <<  psc.m_hnf_index << "hnf_unique_num: " << ihnf_unique_supercell_num[psc.m_hnf_index] << endl;
+            //cerr << __AFLOW_FUNC__ << "H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;
         }
         if(LDEBUG){
             cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
@@ -124,7 +124,7 @@ namespace pocc {
             }else{
                unsigned long long int summation=0;
                for(unsigned long long int j=0; j<i; j++){ summation+=ihnf_unique_supercell_num[j]; }
-               //cerr << "YL_test: " << "summation: " << summation << endl;
+               //cerr << __AFLOW_FUNC__ << "summation: " << summation << endl;
                iota(sample_index.begin(),sample_index.end(),summation); //iota create integer vector from summation for the other supperlattice exclude from 1st
             }
             srand(123); //initial random seed sampling
@@ -150,7 +150,7 @@ namespace pocc {
              //    std::list<pocc::POccSuperCellSet>::iterator it = l_supercell_sets.begin();
              //    std::advance(it,sample_index[selected_indices[i]]);
              //    pocc::POccSuperCell pscs=(*it).getSuperCell();
-             //    cerr << "YL_test:" << "H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;}
+             //    cerr << __AFLOW_FUNC__ << "H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;}
          }
          return selected_random_sampling_supercell_sets;
     }
