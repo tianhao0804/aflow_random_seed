@@ -25,7 +25,6 @@
 #define _DEBUG_POCC_ false  //CO20190116
 #define _DEBUG_POCC_CLUSTER_ANALYSIS_ false && _DEBUG_POCC_  //CO20190116
 
-
 const string POSCAR_START_tag=_VASP_POSCAR_MODE_EXPLICIT_START_; //no-period is important
 const string POSCAR_STOP_tag=_VASP_POSCAR_MODE_EXPLICIT_STOP_; //no-period is important
 const string POSCAR_series_START_tag=_VASP_POSCAR_MODE_EXPLICIT_START_P_; //period is important
@@ -4464,7 +4463,7 @@ namespace pocc {
         //
         //YL20240402 for seed sampling for unique structure screening
         if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")){
-           vector<unsigned long long int> selected_indices = random_sample::first_random_seed_sampling(hnf_count, types_config_permutations_count); //get random seed sampling selected derivitive config indices
+           vector<unsigned long long int> selected_indices = pocc::first_random_seed_sampling(hnf_count, types_config_permutations_count); //get random seed sampling selected derivitive config indices
            for(size_t i = 0; i < selected_indices.size(); i++){add2DerivativeStructuresList(vpsc[selected_indices[i]]);}
            skip_config_num = types_config_permutations_count*hnf_count - selected_indices.size();   // calculate total amout of skipped configs
         }else{
@@ -4739,7 +4738,7 @@ namespace pocc {
                    all_supercells_ss << AFLOWIN_SEPARATION_LINE << endl;
                }
            }
-           const string& pocc_sample_rate_string = aurostd::utype2string<double>(100*random_sample::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0),2); //YL20240419 get first round sampling rate 
+           const string& pocc_sample_rate_string = aurostd::utype2string<double>(100*pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0),2); //YL20240419 get first round sampling rate 
            aurostd::stringstream2file(all_supercells_ss,getOutputPath()+"/"+POCC_FILE_PREFIX+pocc_sample_rate_string+POCC_ALL_SAMPLED_SUPERCELLS_FILE);
         }
 
@@ -4778,7 +4777,7 @@ namespace pocc {
         }
 
         total_degeneracy += skip_config_num;//add skipped config number to total_degeneracy for the check of if(total_permutations_count!=total_degeneracy)
-        l_supercell_sets =  random_sample::second_random_seed_sampling(l_supercell_sets, hnf_count);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs.
+        l_supercell_sets =  pocc::second_random_seed_sampling(l_supercell_sets, hnf_count);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs.
     }
      //YL20240402 for second_random_seed_sampling
     if(total_permutations_count!=total_degeneracy){

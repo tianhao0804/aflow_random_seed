@@ -1,7 +1,15 @@
-//aflow_random_seed_yl.cpp
+// ***************************************************************************
+// * *
+// * AFlow COREY OSES Johns Hopkins University 2012-2024 *
+// * AFlow Yuxiang Liu Johns Hopkins University 2024 *
+// * *
+// ***************************************************************************
+//aflow_pocc_sampling.cpp
+//Reading Pocc sampling rate from --pocc_sample_rate 
 //Two random seed sampling functions are provided for configuration selections.
 //First random seed function is for unique configuration calculations.
 //Second random seed function is for DFT calculations.
+//2024- yliu597@jh.edu
 
 
 #ifndef _AFLOW_POCC_SAMPLING_CPP_
@@ -11,7 +19,7 @@
 #include "aflow_pocc.h"
 #include <unordered_set>
 
-namespace random_sample {
+namespace pocc {
     bool LDEBUG = true;
     double setPOccSampleRate(const string& pocc_sample_rate_string, int sample_round){//give the warning message if --pocc_sample_rate format is wrong
         double pocc_sample_rate;
@@ -50,7 +58,7 @@ namespace random_sample {
     }
 
     vector<unsigned long long int> first_random_seed_sampling(unsigned long long int hnf_count, unsigned long long int types_config_permutations_count){
-         double sample_rate = random_sample::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0);
+         double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0);
          if(LDEBUG){
              cerr << "YL_test: " << "This is first random seed sampling for unique configuration calculations" << endl;
              cerr << "YL_test: " << "Random seed sampling rate is: " << 100*sample_rate << "%" << endl;
@@ -88,7 +96,7 @@ namespace random_sample {
     }
     
     std::list<pocc::POccSuperCellSet> second_random_seed_sampling(std::list<pocc::POccSuperCellSet> l_supercell_sets, unsigned long long int hnf_count){
-        double sample_rate = random_sample::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
+        double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
         vector<unsigned long long int> ihnf_unique_supercell_num(hnf_count,0);
         l_supercell_sets.sort();
         for(unsigned long long int i=0;i<l_supercell_sets.size();i++) {
