@@ -4777,9 +4777,9 @@ namespace pocc {
         }
 
         total_degeneracy += skip_config_num;//add skipped config number to total_degeneracy for the check of if(total_permutations_count!=total_degeneracy)
-        l_supercell_sets =  pocc::second_random_seed_sampling(l_supercell_sets, hnf_count);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs.
+        l_supercell_sets =  pocc::second_random_sampling(l_supercell_sets, hnf_count);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs.
     }
-     //YL20240402 for second_random_seed_sampling
+     //YL20240402 for second_random_sampling
     if(total_permutations_count!=total_degeneracy){
       throw aurostd::xerror(__AFLOW_FILE__,__AFLOW_FUNC__,"Unexpected degeneracy count (does not match expected total permutations count)");
     }

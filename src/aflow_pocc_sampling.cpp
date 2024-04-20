@@ -97,7 +97,7 @@ namespace pocc {
          return selected_indices_set;
     }
     
-    std::list<pocc::POccSuperCellSet> second_random_seed_sampling(std::list<pocc::POccSuperCellSet> l_supercell_sets, unsigned long long int hnf_count){
+    std::list<pocc::POccSuperCellSet> second_random_sampling(std::list<pocc::POccSuperCellSet> l_supercell_sets, unsigned long long int hnf_count){
         double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
         vector<unsigned long long int> ihnf_unique_supercell_num(hnf_count,0);
         l_supercell_sets.sort();
