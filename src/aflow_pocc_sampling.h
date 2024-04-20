@@ -1,4 +1,4 @@
-// aflow_random_seed_yl.h and aflow_random_seed_yl.cpp*
+// aflow_pocc_sampling.h and aflow_random_pocc_sampling.cpp*
 
 #ifndef _AFLOW_POCC_SAMPLING_H_
 #define _AFLOW_POCC_SAMPLING_H_
