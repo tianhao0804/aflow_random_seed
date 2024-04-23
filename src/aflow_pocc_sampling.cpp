@@ -20,7 +20,7 @@
 #include <unordered_set>
 
 namespace pocc {
-    bool LDEBUG = true;
+    bool LDEBUG = false;
     double setPOccSampleRate(const string& pocc_sample_rate_string, int sample_round){//give the warning message if --pocc_sample_rate format is wrong
         double pocc_sample_rate;
         stringstream message;
@@ -64,7 +64,8 @@ namespace pocc {
              cerr << __AFLOW_FUNC__ << "This is first random seed sampling for unique configuration calculations" << endl;
              cerr << __AFLOW_FUNC__ << "Random seed sampling rate is: " << 100*sample_rate << "%" << endl;
          }
-         srand(123); //initial random seed sampling
+         int sample_seed = DEFAULT_POCC_SAMPLE_SEED;
+         srand(sample_seed); //initial random seed sampling
          size_t sample_config_count = static_cast<size_t>(types_config_permutations_count * sample_rate); // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
          //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "sample_config_count" << sample_config_count << endl;
          std::unordered_set<unsigned long long int> selected_site_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
@@ -127,8 +128,11 @@ namespace pocc {
                //cerr << __AFLOW_FUNC__ << "summation: " << summation << endl;
                iota(sample_index.begin(),sample_index.end(),summation); //iota create integer vector from summation for the other supperlattice exclude from 1st
             }
-            srand(123); //initial random seed sampling
+            int sample_seed = DEFAULT_POCC_SAMPLE_SEED;
+            srand(sample_seed); //initial random seed sampling
             size_t sample_config_count = static_cast<size_t>(ihnf_unique_supercell_num[i]*sample_rate); //calculate total amount of selected configurations for each superlattice
+            //cerr << __AFLOW_FUNC__ << "ihnf_nique_supercell_num[" << i << "]" << ihnf_unique_supercell_num[i]<< endl;
+            //cerr << __AFLOW_FUNC__ << "sample_config_count[" << i << "]"  << sample_config_count << endl;
             std::unordered_set<unsigned long long int> selected_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
             while(selected_config_indices_set.size() < sample_config_count) {
                 unsigned long long int index = rand() % ihnf_unique_supercell_num[i] ; //select permuation decoration configuration index
