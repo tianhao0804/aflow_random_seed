@@ -57,7 +57,7 @@ namespace pocc {
         return pocc_sample_rate;
     }
 
-    vector<unsigned long long int> first_random_sampling(unsigned long long int hnf_count, unsigned long long int types_config_permutations_count){
+    vector<unsigned long long int> FirstRandomSampling(unsigned long long int hnf_count, unsigned long long int types_config_permutations_count){
          double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0);
          if(LDEBUG){
              cerr << __AFLOW_FUNC__ << " this is a test message" << endl;

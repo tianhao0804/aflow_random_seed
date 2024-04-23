@@ -4463,7 +4463,7 @@ namespace pocc {
         //
         //YL20240402 for seed sampling for unique structure screening
         if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")){
-           vector<unsigned long long int> selected_indices = pocc::first_random_sampling(hnf_count, types_config_permutations_count); //get random seed sampling selected derivitive config indices
+           vector<unsigned long long int> selected_indices = pocc::FirstRandomSampling(hnf_count, types_config_permutations_count); //get random seed sampling selected derivitive config indices
            for(size_t i = 0; i < selected_indices.size(); i++){add2DerivativeStructuresList(vpsc[selected_indices[i]]);}
            skip_config_num = types_config_permutations_count*hnf_count - selected_indices.size();   // calculate total amout of skipped configs
         }else{
