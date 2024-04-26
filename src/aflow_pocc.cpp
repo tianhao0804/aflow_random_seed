@@ -3636,8 +3636,10 @@ namespace pocc {
     vector<int> current_config;
     //const vector<StructureConfiguration>& v_str_configs=p_str.v_str_configs;
     bool getNextSiteConfiguration(vector<int>& types_config);
+    //cerr <<  __AFLOW_FUNC__ << "v_str_configs.size() = " << v_str_configs.size() << endl;
     for(uint str_config=0;str_config<v_str_configs.size();str_config++){
       str_config_permutations_count=1;
+      //cerr << __AFLOW_FUNC__ << "v_str_configs[str_config].site_configs.size() = " << v_str_configs[str_config].site_configs.size() << endl;
       for(uint site=0;site<v_str_configs[str_config].site_configs.size();site++){
         //for(uint config=0;config<v_str_configs[site].size();config++){
         config_permutations_count=0;
@@ -3645,11 +3647,13 @@ namespace pocc {
         //if(config>0){config_permutations_count++;}
         config_permutations_count++;	//for starting config
         while(getNextSiteConfiguration(current_config)){config_permutations_count++;}
+        //cerr << __AFLOW_FUNC__ << "config_permutations_count = " << config_permutations_count << endl;
         str_config_permutations_count*=config_permutations_count;
         //}
         //str_config_permutations_count*=config_permutations_count;
       }
       types_config_permutations_count+=str_config_permutations_count;
+      //cerr << __AFLOW_FUNC__ << "types_config_permutations_count = " << types_config_permutations_count << endl;
     }
     //cerr << types_config_permutations_count << endl;
     message << "Total count of unique types-configuration permutations = " << types_config_permutations_count;
