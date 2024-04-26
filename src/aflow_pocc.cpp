@@ -3636,6 +3636,14 @@ namespace pocc {
     vector<int> current_config;
     //const vector<StructureConfiguration>& v_str_configs=p_str.v_str_configs;
     bool getNextSiteConfiguration(vector<int>& types_config);
+    unsigned long long int sample_number;  
+    unsigned long long int consider_configs_number;
+    if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){
+       sample_number=aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER")); //get pocc sample number
+       consider_configs_number = 100 * sample_number;  // considering 100*pocc_sample_number to generate random number
+       //cerr << __AFLOW_FUNC__ << "sample_number = " << sample_number << endl;
+       //cerr << __AFLOW_FUNC__ << "consider_configs_number = " << consider_configs_number << endl;
+    }
     //cerr <<  __AFLOW_FUNC__ << "v_str_configs.size() = " << v_str_configs.size() << endl;
     for(uint str_config=0;str_config<v_str_configs.size();str_config++){
       str_config_permutations_count=1;
@@ -3647,14 +3655,20 @@ namespace pocc {
         //if(config>0){config_permutations_count++;}
         config_permutations_count++;	//for starting config
         while(getNextSiteConfiguration(current_config)){config_permutations_count++;}
-        //cerr << __AFLOW_FUNC__ << "config_permutations_count = " << config_permutations_count << endl;
+        cerr << __AFLOW_FUNC__ << "config_permutations_count = " << config_permutations_count << endl;
         str_config_permutations_count*=config_permutations_count;
         //}
         //str_config_permutations_count*=config_permutations_count;
+        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && str_config_permutations_count > consider_configs_number){break;} // when str_config_permutations_count meet consider_configs_number break the for loop
       }
       types_config_permutations_count+=str_config_permutations_count;
       //cerr << __AFLOW_FUNC__ << "types_config_permutations_count = " << types_config_permutations_count << endl;
+      if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && types_config_permutations_count > consider_configs_number){break;} // when types_config_permutations_count meet consider_configs_number break for loop
     }
+    if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && types_config_permutations_count < sample_number){
+        message << "Permutation configurations=" << types_config_permutations_count <<". Please choose pocc_sample_number less than " << types_config_permutations_count << endl;
+        throw aurostd::xerror(__AFLOW_FILE__,__AFLOW_FUNC__,message,_INPUT_ILLEGAL_);// when pocc_sample_number less than types_config_permutations_count throw out error message
+    } 
     //cerr << types_config_permutations_count << endl;
     message << "Total count of unique types-configuration permutations = " << types_config_permutations_count;
     pflow::logger(__AFLOW_FILE__,__AFLOW_FUNC__,message,m_aflags,*p_FileMESSAGE,*p_oss,_LOGGER_MESSAGE_);
