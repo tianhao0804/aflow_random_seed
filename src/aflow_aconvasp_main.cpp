@@ -1048,6 +1048,7 @@ uint PflowARGs(vector<string> &argv,vector<string> &cmds,aurostd::xoption &vpflo
   vpflow.args2addattachedscheme(argv,cmds,"PARAMS","--params=|--parameters=","");                                                  // --proto=123:A:B:C --proto_icsd=Gd1Mn2Si2_ICSD_54947
   vpflow.args2addattachedscheme(argv,cmds,"POCC_PARAMS","--pocc_params=","");                                                      // --pocc_params=S0-1xC_S1-0.5xE-0.5xF_S2-0.3333xA-0.3333xB-0.3333xD
   vpflow.args2addattachedscheme(argv,cmds,"POCC_SAMPLE_RATE","--pocc_sample_rate=","");//added by YL20240408 for random seed sampling rate
+  vpflow.args2addattachedscheme(argv,cmds,"POCC_SAMPLE_NUMBER","--pocc_sample_number=","");//added by YL20240426 for sampling number
   vpflow.args2addattachedscheme(argv,cmds,"POCC_TOL","--pocc_tol=","");                                                      // --pocc_params=S0-1xC_S1-0.5xE-0.5xF_S2-0.3333xA-0.3333xB-0.3333xD
   if(vpflow.flag("POCC_PARAMS")){
     if(LDEBUG) {cerr << "PflowARGs(): BEFORE pocc_params=" << vpflow.getattachedscheme("POCC_PARAMS") << endl;}
