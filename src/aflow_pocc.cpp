@@ -4766,10 +4766,10 @@ namespace pocc {
            string POSCAR_strtag="";
            POccSuperCell psc;
            unsigned long long int isupercell=0;
-           cerr << "TEST: " << "l_supercell_sets.size() = " << l_supercell_sets.size() << endl;
+           l_supercell_sets.sort();
            for(std::list<POccSuperCellSet>::iterator it=l_supercell_sets.begin();it!=l_supercell_sets.end();++it){
                isupercell=std::distance(l_supercell_sets.begin(),it);
-               if(true) {cerr << __AFLOW_FUNC__ << " isupercell=" << isupercell << endl;}
+               if(LDEBUG) {cerr << __AFLOW_FUNC__ << " isupercell=" << isupercell << endl;}
                const POccSuperCellSet& pscs=(*it);
                all_supercells_ss << AFLOWIN_SEPARATION_LINE << endl;
                all_supercells_ss << AFLOW_POCC_TAG << "STRUCTURES_GROUP " << isupercell+1 << "/" << l_supercell_sets.size() << endl;
@@ -4807,6 +4807,7 @@ namespace pocc {
            message << "Writing out all structures before second sampling";pflow::logger(__AFLOW_FILE__,__AFLOW_FUNC__,message,m_aflags,*p_FileMESSAGE,*p_oss,_LOGGER_MESSAGE_);
            stringstream unique_derivative_structures_ss;
            unsigned long long int isupercell=0;
+           l_supercell_sets.sort();
            for(std::list<POccSuperCellSet>::iterator it=l_supercell_sets.begin();it!=l_supercell_sets.end();++it)
            { 
              isupercell=std::distance(l_supercell_sets.begin(),it);
