@@ -58,16 +58,19 @@ namespace pocc {
     }
 
     vector<unsigned long long int> FirstRandomSampling(unsigned long long int hnf_count, unsigned long long int types_config_permutations_count){
-         double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0);
+         size_t sample_config_count;
          if(LDEBUG){
              cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
              cerr << __AFLOW_FUNC__ << "This is first random seed sampling for unique configuration calculations" << endl;
-             cerr << __AFLOW_FUNC__ << "Random seed sampling rate is: " << 100*sample_rate << "%" << endl;
          }
          int sample_seed = DEFAULT_POCC_SAMPLE_SEED;
          srand(sample_seed); //initial random seed sampling
-         size_t sample_config_count = static_cast<size_t>(types_config_permutations_count * sample_rate); // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
-         //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "sample_config_count" << sample_config_count << endl;
+         if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")){
+             double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0);
+             sample_config_count = static_cast<size_t>(types_config_permutations_count * sample_rate);
+         } // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
+         if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){sample_config_count = static_cast<size_t>(aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0));} // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
+         cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "sample_config_count" << sample_config_count << endl;
          std::unordered_set<unsigned long long int> selected_site_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
          while(selected_site_config_indices_set.size() < sample_config_count) {
              unsigned long long int index = rand() % types_config_permutations_count; //select permuation decoration configuration index
@@ -77,7 +80,7 @@ namespace pocc {
          //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
          sort(selected_site_config_indices.begin(), selected_site_config_indices.end());//set selected_indices to save sorted indices
          //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
-         if(LDEBUG){
+         if(true){
             //for(size_t i=0; i< sample_config_count; i++){
             cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
             for(size_t i=0; i< selected_site_config_indices.size(); i++){
@@ -94,11 +97,11 @@ namespace pocc {
                  //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "i_j" << i << j  << endl;
              }
          }
-         //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "size of selected_indices_set" << selected_indices_set.size() << endl;
+         cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "size of selected_indices_set" << selected_indices_set.size() << endl;
          return selected_indices_set;
     }
     
-    std::list<pocc::POccSuperCellSet> SecondRandomSampling(std::list<pocc::POccSuperCellSet> l_supercell_sets, unsigned long long int hnf_count){
+    std::list<pocc::POccSuperCellSet> SecondRandomSamplingWithRate(std::list<pocc::POccSuperCellSet> l_supercell_sets, unsigned long long int hnf_count){
         double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
         vector<unsigned long long int> ihnf_unique_supercell_num(hnf_count,0);
         l_supercell_sets.sort();
@@ -156,6 +159,30 @@ namespace pocc {
              //    pocc::POccSuperCell pscs=(*it).getSuperCell();
              //    cerr << __AFLOW_FUNC__ << "H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;}
          }
+         return selected_random_sampling_supercell_sets;
+    }
+
+    std::list<pocc::POccSuperCellSet> SecondRandomSamplingWithNumber(std::list<pocc::POccSuperCellSet> l_supercell_sets){
+        std::unordered_set<unsigned long long int> selected_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
+        unsigned long long int sample_number=aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0);
+        int sample_seed = DEFAULT_POCC_SAMPLE_SEED;
+        srand(sample_seed); //initial random seed sampling
+        l_supercell_sets.sort();
+        while(selected_config_indices_set.size() < sample_number) {
+            unsigned long long int index = rand() % l_supercell_sets.size(); //select random number from whole l_supercell_sets
+            selected_config_indices_set.insert(index);
+        }
+        std::vector<unsigned long long int> selected_config_indices(selected_config_indices_set.begin(), selected_config_indices_set.end());
+        //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_config_indices.size: " << selected_config_indices.size() << endl;
+        sort(selected_config_indices.begin(), selected_config_indices.end());//set selected_indices to save sorted indices
+        //cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_config_indices.size: " << selected_config_indices.size() << endl;
+        std::list<pocc::POccSuperCellSet> selected_random_sampling_supercell_sets;
+        for(size_t i = 0; i < sample_number; i++){
+            std::list<pocc::POccSuperCellSet>::iterator it = l_supercell_sets.begin();
+            std::advance(it,selected_config_indices[i]);
+            selected_random_sampling_supercell_sets.push_back(*it);//push back the selected supercell
+        }
+
          return selected_random_sampling_supercell_sets;
     }
 

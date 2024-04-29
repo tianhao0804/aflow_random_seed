@@ -3636,14 +3636,16 @@ namespace pocc {
     vector<int> current_config;
     //const vector<StructureConfiguration>& v_str_configs=p_str.v_str_configs;
     bool getNextSiteConfiguration(vector<int>& types_config);
-    unsigned long long int sample_number;  
-    unsigned long long int consider_configs_number;
+    //YL20240426 for the flag --pocc_sample_number to count until a given site_config_count
+    unsigned long long int sample_number;  //YL20240426 
+    unsigned long long int consider_configs_number;  //YL20240426
     if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){
-       sample_number=aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER")); //get pocc sample number
+       sample_number=aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0); //get pocc sample number
        consider_configs_number = 100 * sample_number;  // considering 100*pocc_sample_number to generate random number
        //cerr << __AFLOW_FUNC__ << "sample_number = " << sample_number << endl;
        //cerr << __AFLOW_FUNC__ << "consider_configs_number = " << consider_configs_number << endl;
     }
+    //YL20240426 for the flag --pocc_sample_number to count until a given site_config_count
     //cerr <<  __AFLOW_FUNC__ << "v_str_configs.size() = " << v_str_configs.size() << endl;
     for(uint str_config=0;str_config<v_str_configs.size();str_config++){
       str_config_permutations_count=1;
@@ -3659,15 +3661,16 @@ namespace pocc {
         str_config_permutations_count*=config_permutations_count;
         //}
         //str_config_permutations_count*=config_permutations_count;
-        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && str_config_permutations_count > consider_configs_number){break;} // when str_config_permutations_count meet consider_configs_number break the for loop
+        //cerr << __AFLOW_FUNC__ << "str_config_permutations = " << str_config_permutations_count << endl;
+        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && str_config_permutations_count > consider_configs_number){break;} // YL20240426 when str_config_permutations_count meet consider_configs_number break the for loop
       }
       types_config_permutations_count+=str_config_permutations_count;
       //cerr << __AFLOW_FUNC__ << "types_config_permutations_count = " << types_config_permutations_count << endl;
-      if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && types_config_permutations_count > consider_configs_number){break;} // when types_config_permutations_count meet consider_configs_number break for loop
+      if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && types_config_permutations_count > consider_configs_number){break;} // YL20240426 when types_config_permutations_count meet consider_configs_number break for loop
     }
     if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && types_config_permutations_count < sample_number){
         message << "Permutation configurations=" << types_config_permutations_count <<". Please choose pocc_sample_number less than " << types_config_permutations_count << endl;
-        throw aurostd::xerror(__AFLOW_FILE__,__AFLOW_FUNC__,message,_INPUT_ILLEGAL_);// when pocc_sample_number less than types_config_permutations_count throw out error message
+        throw aurostd::xerror(__AFLOW_FILE__,__AFLOW_FUNC__,message,_INPUT_ILLEGAL_);// YL20240426 when pocc_sample_number less than types_config_permutations_count throw out error message
     } 
     //cerr << types_config_permutations_count << endl;
     message << "Total count of unique types-configuration permutations = " << types_config_permutations_count;
@@ -4432,8 +4435,33 @@ namespace pocc {
           vpsc.push_back(psc);
           vv_types_config.push_back(v_types_config);
           site_config_index++;
+          if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && site_config_index==types_config_permutations_count){
+              cerr << "test:" << "site_config_index = " << site_config_index << endl;
+              break;}//  YL20240427 stop counting when turn on pocc_sample_number and the site_config_index reach the pocc_sample_number
         }
         hnf_index++;
+        //cerr << "hnf_index" << hnf_index << endl;
+        //cerr << "site_config_index" << site_config_index << endl;
+      }
+      if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE") || XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){
+         vector<unsigned long long int> selected_indices_set = pocc::FirstRandomSampling(hnf_count, types_config_permutations_count); //get random seed sampling selected derivitive config indices
+         skip_config_num = types_config_permutations_count*hnf_count - selected_indices_set.size();   // calculate total amout of skipped configs
+         vector<POccSuperCell> sampled_vpsc;
+         vector<POccUFFEnergyAnalyzer> sampled_v_energy_analyzer;
+         vector<vector<vector<int>>> sampled_vv_types_config;
+         cerr << __AFLOW_FUNC__ << "vpsc.size = " << vpsc.size() << endl;
+         cerr << __AFLOW_FUNC__ << "vv_types_config.size = " << vv_types_config.size() << endl;
+         cerr << __AFLOW_FUNC__ << "v_energy_analyzer.size = " << v_energy_analyzer.size() << endl;
+         for (size_t i=0; i<selected_indices_set.size(); i++){
+            cerr << "test: " << "selected_indices_set[" << i << "] = " << selected_indices_set[i] << endl;
+            sampled_vpsc.push_back(vpsc[selected_indices_set[i]]);
+            sampled_vv_types_config.push_back(vv_types_config[selected_indices_set[i]]);
+         }
+         cerr << "test 1111" << endl;
+         vpsc = sampled_vpsc;
+         cerr << "test 1111" << endl;
+         cerr << "test 1111" << endl;
+         vv_types_config = sampled_vv_types_config;
       }
       std::mutex m_save, m_job;
       xthread::xThread xt(KBIN::get_NCPUS(m_kflags),1);
@@ -4467,6 +4495,7 @@ namespace pocc {
         return;
       }
       else{
+        cerr << "test1" << endl;
         std::function<void(int,
             vector<POccSuperCell>&,
             const vector<POccUFFEnergyAnalyzer>&,
@@ -4476,18 +4505,21 @@ namespace pocc {
             std::mutex&)> fn=std::bind(&POccCalculator::calculatePOccSuperCellUFF,this,
           std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,std::placeholders::_4,std::placeholders::_5,std::placeholders::_6,std::placeholders::_7);
         // the first number sets the number of threads that are created overall (in this case one thread per CPU)
+        cerr << "test2" << endl;
         pflow::updateProgressBar(0, vpsc.size(), *p_oss);
+        cerr << "test3" << endl;
         xt.run(KBIN::get_NCPUS(m_kflags), fn, vpsc, v_energy_analyzer, vv_types_config, npsc_queue, m_save, m_job);
+        cerr << "test4" << endl;
         //
-        //YL20240402 for seed sampling for unique structure screening
-        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")){
-           vector<unsigned long long int> selected_indices = pocc::FirstRandomSampling(hnf_count, types_config_permutations_count); //get random seed sampling selected derivitive config indices
-           for(size_t i = 0; i < selected_indices.size(); i++){add2DerivativeStructuresList(vpsc[selected_indices[i]]);}
-           skip_config_num = types_config_permutations_count*hnf_count - selected_indices.size();   // calculate total amout of skipped configs
-        }else{
-           for(size_t i = 0; i < vpsc.size(); i++){add2DerivativeStructuresList(vpsc[i]);}
-        }
-        //YL20240402 for seed sampling for unique structure screening
+        //YL20240426 for pocc_sample_number or pocc_sample_rate for unique structures screening
+        //if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE") || XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){
+           //vector<unsigned long long int> selected_indices = pocc::FirstRandomSampling(hnf_count, types_config_permutations_count, vpsc); //get random seed sampling selected derivitive config indices
+           //for(size_t i = 0; i < selected_indices.size(); i++){add2DerivativeStructuresList(vpsc[selected_indices[i]]);}
+           //skip_config_num = types_config_permutations_count*hnf_count - selected_indices.size();   // calculate total amout of skipped configs
+        //}else{
+        for(size_t i = 0; i < vpsc.size(); i++){add2DerivativeStructuresList(vpsc[i]);}
+        //}
+        //YL20240426 for pocc_sample_rate or  pocc_sample_number for unique structures screening
       }
 
     }else{  //group theory approach
@@ -4724,8 +4756,9 @@ namespace pocc {
     }
 
      //YL20240402  for second random_seed sampling
-    if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")){
-        //YL20240419 save all structures after first round sampling in aflow.pocc.xxx_percent_sampled_structures_all.out.xz
+    if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE") || XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){
+        //YL20240419 save all structures after first round sampling in aflow.pocc.xxx_percent_sampled_structures_all.out.xz when turn on pocc_sample_rate
+        //YL20240419 save all structures after first round sampling in aflow.pocc.xxx_sampled_structures_all.out.xz when turn on pocc_sample_number
         if(DEFAULT_POCC_WRITE_OUT_ALL_SUPERCELLS && !m_aflags.Directory.empty() && !m_p_flags.flag("POCC_SKIP_WRITING_FILES")){
            message << "Writing out " << POCC_ALL_SUPERCELLS_FILE << ". Please be patient.";
            pflow::logger(__AFLOW_FILE__,__AFLOW_FUNC__,message,m_aflags,*p_FileMESSAGE,*p_oss,_LOGGER_MESSAGE_);
@@ -4733,9 +4766,10 @@ namespace pocc {
            string POSCAR_strtag="";
            POccSuperCell psc;
            unsigned long long int isupercell=0;
+           cerr << "TEST: " << "l_supercell_sets.size() = " << l_supercell_sets.size() << endl;
            for(std::list<POccSuperCellSet>::iterator it=l_supercell_sets.begin();it!=l_supercell_sets.end();++it){
                isupercell=std::distance(l_supercell_sets.begin(),it);
-               if(LDEBUG) {cerr << __AFLOW_FUNC__ << " isupercell=" << isupercell << endl;}
+               if(true) {cerr << __AFLOW_FUNC__ << " isupercell=" << isupercell << endl;}
                const POccSuperCellSet& pscs=(*it);
                all_supercells_ss << AFLOWIN_SEPARATION_LINE << endl;
                all_supercells_ss << AFLOW_POCC_TAG << "STRUCTURES_GROUP " << isupercell+1 << "/" << l_supercell_sets.size() << endl;
@@ -4757,8 +4791,15 @@ namespace pocc {
                    all_supercells_ss << AFLOWIN_SEPARATION_LINE << endl;
                }
            }
-           const string& pocc_sample_rate_string = aurostd::utype2string<double>(100*pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0),2); //YL20240419 get first round sampling rate 
-           aurostd::stringstream2file(all_supercells_ss,getOutputPath()+"/"+POCC_FILE_PREFIX+pocc_sample_rate_string+POCC_ALL_SAMPLED_SUPERCELLS_FILE);
+           if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")) {
+              const string& pocc_sample_rate_string = aurostd::utype2string<double>(100*pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0),2) + "_percent" ; //YL20240419 get first round sampling rate 
+              aurostd::stringstream2file(all_supercells_ss,getOutputPath()+"/"+POCC_FILE_PREFIX+pocc_sample_rate_string+POCC_ALL_SAMPLED_SUPERCELLS_FILE);
+           } 
+           if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")) {
+              const string& pocc_sample_number_string = XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER");
+              cerr << "POCC_ALL_SAMPLED_SUPERCELLS_FILE" << POCC_ALL_SAMPLED_SUPERCELLS_FILE << endl;
+              aurostd::stringstream2file(all_supercells_ss,getOutputPath()+"/"+POCC_FILE_PREFIX+pocc_sample_number_string+POCC_ALL_SAMPLED_SUPERCELLS_FILE);
+           } 
         }
 
         //YL20240419 save all unique supercell without second round sampling in aflow.pocc.without_sampled_structures_unique.out
@@ -4788,9 +4829,14 @@ namespace pocc {
         }
 
         total_degeneracy += skip_config_num;//add skipped config number to total_degeneracy for the check of if(total_permutations_count!=total_degeneracy)
-        l_supercell_sets =  pocc::SecondRandomSampling(l_supercell_sets, hnf_count);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs.
+        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")){
+           l_supercell_sets =  pocc::SecondRandomSamplingWithRate(l_supercell_sets, hnf_count);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs with SecondRandomSamplingWithRate.
+        }
+        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){
+           l_supercell_sets =  pocc::SecondRandomSamplingWithNumber(l_supercell_sets);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs with SecondRandomSamplingWithNumber. 
+        }
     }
-     //YL20240402 for SecondRandomSampling
+     //YL20240402 for SecondRandomSamplingWithRate
     if(total_permutations_count!=total_degeneracy){
       throw aurostd::xerror(__AFLOW_FILE__,__AFLOW_FUNC__,"Unexpected degeneracy count (does not match expected total permutations count)");
     }
