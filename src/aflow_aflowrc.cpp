@@ -523,7 +523,7 @@
 #define         POCC_PHDOSCAR_FILE                                XHOST.adefault.getattachedscheme("POCC_PHDOSCAR_FILE")  //ME20210927
 #define AFLOWRC_POCC_ANIONS_LIST                                  string("B,C,I,N,O")
 #define         POCC_ANIONS_LIST                                  XHOST.adefault.getattachedscheme("POCC_ANIONS_LIST")
-#define AFLOWRC_POCC_ALL_SAMPLED_SUPERCELLS_FILE                  string("_sampled_structures_all.out")  //YL20240419
+#define AFLOWRC_POCC_ALL_SAMPLED_SUPERCELLS_FILE                  string("_percent_sampled_structures_all.out")  //YL20240419
 #define         POCC_ALL_SAMPLED_SUPERCELLS_FILE                  XHOST.adefault.getattachedscheme("POCC_ALL_SAMPLED_SUPERCELLS_FILE")
 #define AFLOWRC_POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE       string("without_sampled_structures_unique.out")  //YL20240419
 #define         POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE       XHOST.adefault.getattachedscheme("POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE")
