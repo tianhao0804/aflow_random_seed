@@ -3657,7 +3657,7 @@ namespace pocc {
         //if(config>0){config_permutations_count++;}
         config_permutations_count++;	//for starting config
         while(getNextSiteConfiguration(current_config)){config_permutations_count++;}
-        //cerr << __AFLOW_FUNC__ << "config_permutations_count = " << config_permutations_count << endl;
+        cerr << __AFLOW_FUNC__ << "config_permutations_count = " << config_permutations_count << endl;
         str_config_permutations_count*=config_permutations_count;
         //}
         //str_config_permutations_count*=config_permutations_count;
