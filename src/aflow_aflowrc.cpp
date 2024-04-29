@@ -523,7 +523,7 @@
 #define         POCC_PHDOSCAR_FILE                                XHOST.adefault.getattachedscheme("POCC_PHDOSCAR_FILE")  //ME20210927
 #define AFLOWRC_POCC_ANIONS_LIST                                  string("B,C,I,N,O")
 #define         POCC_ANIONS_LIST                                  XHOST.adefault.getattachedscheme("POCC_ANIONS_LIST")
-#define AFLOWRC_POCC_ALL_SAMPLED_SUPERCELLS_FILE                  string("_percent_sampled_structures_all.out")  //YL20240419
+#define AFLOWRC_POCC_ALL_SAMPLED_SUPERCELLS_FILE                  string("_sampled_structures_all.out")  //YL20240419
 #define         POCC_ALL_SAMPLED_SUPERCELLS_FILE                  XHOST.adefault.getattachedscheme("POCC_ALL_SAMPLED_SUPERCELLS_FILE")
 #define AFLOWRC_POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE       string("without_sampled_structures_unique.out")  //YL20240419
 #define         POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE       XHOST.adefault.getattachedscheme("POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE")
@@ -531,6 +531,8 @@
 #define         DEFAULT_POCC_SAMPLE_RATE_STRING                   XHOST.adefault.getattachedscheme("DEFAULT_POCC_SAMPLE_RATE_STRING")
 #define AFLOWRC_DEFAULT_POCC_SAMPLE_SEED                          123  //YL20240423
 #define         DEFAULT_POCC_SAMPLE_SEED                          XHOST.adefault.getattachedutype<int>("DEFAULT_POCC_SAMPLE_SEED")
+#define AFLOWRC_DEFAULT_POCC_SAMPLE_NUMBER                        1  //YL20240426
+#define         DEFAULT_POCC_SAMPLE_NUMBER                        XHOST.adefault.getattachedutype<int>("DEFAULT_POCC_SAMPLE_NUMBER")
 
 
 
@@ -1620,6 +1622,7 @@ namespace aflowrc {
     aflowrc::load_default("POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE",AFLOWRC_POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE);  //YL20240419
     aflowrc::load_default("DEFAULT_POCC_SAMPLE_RATE_STRING",AFLOWRC_DEFAULT_POCC_SAMPLE_RATE_STRING);  //YL20240423
     aflowrc::load_default("DEFAULT_POCC_SAMPLE_SEED",AFLOWRC_DEFAULT_POCC_SAMPLE_SEED);  //YL20240423
+    aflowrc::load_default("DEFAULT_POCC_SAMPLE_NUMBER",AFLOWRC_DEFAULT_POCC_SAMPLE_NUMBER);  //YL20240426
 
     // DEFAULT APL
     //// DEFAULT APL SUPERCELL
@@ -2327,6 +2330,7 @@ namespace aflowrc {
     aflowrc << "POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE=\"" << AFLOWRC_POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE << "\"" << endl;  //YL20240419
     aflowrc << "DEFAULT_POCC_SAMPLE_RATE_STRING=\"" << AFLOWRC_DEFAULT_POCC_SAMPLE_RATE_STRING << "\"" << endl;  //YL20240423
     aflowrc << "DEFAULT_POCC_SAMPLE_SEED=" << AFLOWRC_DEFAULT_POCC_SAMPLE_SEED << endl;  //YL20240423
+    aflowrc << "DEFAULT_POCC_SAMPLE_NUMBER=" << AFLOWRC_DEFAULT_POCC_SAMPLE_NUMBER << endl;  //YL20240426
 
     aflowrc << " " << endl;
     aflowrc << "// DEFAULTS APL" << endl;
@@ -3000,6 +3004,7 @@ namespace aflowrc {
     if(LDEBUG) oss << "XHOST.adefault.getattachedscheme(\"POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE\")=\"" << POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE << "\"" << endl;  //YL20240419
     if(LDEBUG) oss << "XHOST.adefault.getattachedscheme(\"DEFAULT_POCC_SAMPLE_RATE_STRING\")=\"" << DEFAULT_POCC_SAMPLE_RATE_STRING << "\"" << endl;  //YL20240424
     if(LDEBUG) oss << "XHOST.adefault.getattachedscheme(\"DEFAULT_POCC_SAMPLE_SEED\")=" << DEFAULT_POCC_SAMPLE_SEED << endl;  //YL20240423
+    if(LDEBUG) oss << "XHOST.adefault.getattachedscheme(\"DEFAULT_POCC_SAMPLE_NUMBER\")=" << DEFAULT_POCC_SAMPLE_NUMBER << endl;  //YL20240426
 
     if(LDEBUG) oss << "// DEFAULTS APL" << endl;
     if(LDEBUG) oss << "XHOST.adefault.getattachedscheme(\"DEFAULT_APL_PREC\")=\"" << DEFAULT_APL_PREC << "\"" << endl;
