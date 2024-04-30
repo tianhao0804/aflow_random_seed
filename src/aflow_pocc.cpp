@@ -4756,7 +4756,7 @@ namespace pocc {
         //YL20240419 save all structures after first round sampling in aflow.pocc.xxx_percent_sampled_structures_all.out.xz when turn on pocc_sample_rate
         //YL20240419 save all structures after first round sampling in aflow.pocc.xxx_sampled_structures_all.out.xz when turn on pocc_sample_number
         if(DEFAULT_POCC_WRITE_OUT_ALL_SAMPLED_SUPERCELLS && !m_aflags.Directory.empty() && !m_p_flags.flag("POCC_SKIP_WRITING_FILES")){
-           message << "Writing out " << POCC_ALL_SUPERCELLS_FILE << ". Please be patient.";
+           message << "Writing out " << POCC_ALL_SAMPLED_SUPERCELLS_FILE  << ". Please be patient.";
            pflow::logger(__AFLOW_FILE__,__AFLOW_FUNC__,message,m_aflags,*p_FileMESSAGE,*p_oss,_LOGGER_MESSAGE_);
            stringstream all_supercells_ss;
            string POSCAR_strtag="";
@@ -4787,18 +4787,19 @@ namespace pocc {
                }
            }
            if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")) {
-              const string& pocc_sample_rate_string = aurostd::utype2string<double>(100*pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0),2) + "_percent" ; //YL20240419 get first round sampling rate 
+              const string& pocc_sample_rate_string = aurostd::utype2string<double>(100*pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0),2) + "_percent_" ; //YL20240419 get first round sampling rate 
               aurostd::stringstream2file(all_supercells_ss,getOutputPath()+"/"+POCC_FILE_PREFIX+pocc_sample_rate_string+POCC_ALL_SAMPLED_SUPERCELLS_FILE);
            } 
            if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")) {
-              const string& pocc_sample_number_string = XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER");
+              const string& pocc_sample_number_string = XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER") + "_";
               aurostd::stringstream2file(all_supercells_ss,getOutputPath()+"/"+POCC_FILE_PREFIX+pocc_sample_number_string+POCC_ALL_SAMPLED_SUPERCELLS_FILE);
            } 
         }
 
         //YL20240419 save all unique supercell without second round sampling in aflow.pocc.without_sampled_structures_unique.out
         if(DEFAULT_POCC_WRITE_OUT_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS && !m_aflags.Directory.empty() && !m_p_flags.flag("POCC_SKIP_WRITING_FILES")){
-           message << "Writing out all structures before second sampling";pflow::logger(__AFLOW_FILE__,__AFLOW_FUNC__,message,m_aflags,*p_FileMESSAGE,*p_oss,_LOGGER_MESSAGE_);
+           message << "Writing out " << POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE << ". Please be patient" ;
+           pflow::logger(__AFLOW_FILE__,__AFLOW_FUNC__,message,m_aflags,*p_FileMESSAGE,*p_oss,_LOGGER_MESSAGE_);
            stringstream unique_derivative_structures_ss;
            unsigned long long int isupercell=0;
            for(std::list<POccSuperCellSet>::iterator it=l_supercell_sets.begin();it!=l_supercell_sets.end();++it)
