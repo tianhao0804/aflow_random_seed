@@ -542,24 +542,38 @@ namespace AGL_functions {
     // string FileLockName = "agl.LOCK";
     // string AflowInName = _AFLOWIN_;
     // string FileLockName = _AFLOWLOCK_;    
-    string AflowInName = "", FileLockName = "";
+    string AflowInName=_AFLOWIN_, FileLockName=_AFLOWLOCK_; //CO20240406
 
-    // string filedirname = aurostd::CleanFileName(directory) + "agl.LOCK";
-    if (aurostd::FileExist(aurostd::CleanFileName(directory) + "agl.LOCK")) {
-      FileLockName = "agl.LOCK";
-    } else if (aurostd::FileExist(aurostd::CleanFileName(directory) + "ael.LOCK")) {
-      FileLockName = "ael.LOCK";
-    } else {
-      FileLockName = _AFLOWLOCK_;
+    //CO20240406 START - fixing for different variants
+    vector<string> vaflowin_variants;
+    aurostd::string2tokens(DEFAULT_FILE_AFLOWIN_VARIANTS_AELAGL,vaflowin_variants,",");
+    for(uint i=0;i<vaflowin_variants.size();i++){
+      if(aurostd::FileExist(aurostd::CleanFileName(directory+"/"+vaflowin_variants[i]))){AflowInName=vaflowin_variants[i];break;}
     }
+    
+    vector<string> vlock_variants;
+    aurostd::string2tokens(DEFAULT_FILE_AFLOWLOCK_VARIANTS_AELAGL,vlock_variants,",");
+    for(uint i=0;i<vlock_variants.size();i++){
+      if(aurostd::FileExist(aurostd::CleanFileName(directory+"/"+vlock_variants[i]))){FileLockName=vlock_variants[i];break;}
+    }
+    //CO20240406 STOP - fixing for different variants
 
-    if (aurostd::FileExist(aurostd::CleanFileName(directory) + _AFLOWIN_AGL_DEFAULT_)) {
-      AflowInName = _AFLOWIN_AGL_DEFAULT_;
-    } else if (aurostd::FileExist(aurostd::CleanFileName(directory) + _AFLOWIN_AEL_DEFAULT_)) {
-      AflowInName = _AFLOWIN_AEL_DEFAULT_;
-    } else {
-      AflowInName = _AFLOWIN_;
-    }
+    //[CO20240406 - OBSOLETE]// string filedirname = aurostd::CleanFileName(directory) + "agl.LOCK";
+    //[CO20240406 - OBSOLETE]if (aurostd::FileExist(aurostd::CleanFileName(directory) + "agl.LOCK")) {
+    //[CO20240406 - OBSOLETE]  FileLockName = "agl.LOCK";
+    //[CO20240406 - OBSOLETE]} else if (aurostd::FileExist(aurostd::CleanFileName(directory) + "ael.LOCK")) {
+    //[CO20240406 - OBSOLETE]  FileLockName = "ael.LOCK";
+    //[CO20240406 - OBSOLETE]} else {
+    //[CO20240406 - OBSOLETE]  FileLockName = _AFLOWLOCK_;
+    //[CO20240406 - OBSOLETE]}
+
+    //[CO20240406 - OBSOLETE]if (aurostd::FileExist(aurostd::CleanFileName(directory) + _AFLOWIN_AGL_DEFAULT_)) {
+    //[CO20240406 - OBSOLETE]  AflowInName = _AFLOWIN_AGL_DEFAULT_;
+    //[CO20240406 - OBSOLETE]} else if (aurostd::FileExist(aurostd::CleanFileName(directory) + _AFLOWIN_AEL_DEFAULT_)) {
+    //[CO20240406 - OBSOLETE]  AflowInName = _AFLOWIN_AEL_DEFAULT_;
+    //[CO20240406 - OBSOLETE]} else {
+    //[CO20240406 - OBSOLETE]  AflowInName = _AFLOWIN_;
+    //[CO20240406 - OBSOLETE]}
 
     // Call AGL_xvasp_flags_populate to populate xvasp, aflags, kflags and vflags classes
     uint aglerror = AGL_functions::AGL_xvasp_flags_populate(xvasp, AflowIn, AflowInName, FileLockName, directory, aflags, kflags, vflags, FileMESSAGE);
@@ -2310,6 +2324,10 @@ namespace AGL_functions {
     aurostd::StringstreamClean(aus);
     aus << _AGLSTR_MESSAGE_ << "starting try loop to create strained structures and run GIBBS" << endl;  
     aurostd::PrintMessageStream(FileMESSAGE,aus,XHOST.QUIET);
+    
+    vector<string> vlock_variants_aelagl; //CO20240409
+    aurostd::string2tokens(DEFAULT_FILE_AFLOWLOCK_VARIANTS_AELAGL,vlock_variants_aelagl,","); //CO20240409
+    string FileLockName=""; //CO20240409
 
     // Create set of strained structures, write _AFLOWIN_ files to directories, run VASP, collect results, and pass to GIBBS method
     // This "try" loop is adapted from that in AFLOW APL function DirectMethodPC::runVASPCalculations()
@@ -2403,6 +2421,12 @@ namespace AGL_functions {
           aurostd::PrintMessageStream(FileMESSAGE,aus,XHOST.QUIET);
           return 1;
         }
+        
+        for(uint ilock=0;ilock<vlock_variants_aelagl.size();ilock++){ //CO20240409
+          //CO20240409 - it seems vaspRuns[idVaspRun].Directory is an OBSOLETE setting, we check both anyway
+          if(aurostd::FileExist(aurostd::CleanFileName(vaspRuns[idVaspRun].Directory+"/"+vlock_variants_aelagl[ilock]))){FileLockName=vlock_variants_aelagl[ilock];break;}  //CO20240409
+          if(aurostd::FileExist(aurostd::CleanFileName(dirrunname.at(idVaspRun)+"/"+vlock_variants_aelagl[ilock]))){FileLockName=vlock_variants_aelagl[ilock];break;}  //CO20240409
+        } //CO20240409
 
         // If there are already LOCK or OUTCAR.static files in this directory, it means this directory was already generated and computed.
         // Therefore do not touch, but store this structure in the list, so that it can be used in the next part of code.
@@ -2413,10 +2437,13 @@ namespace AGL_functions {
             aurostd::FileExist( dirrunname.at(idVaspRun) + string("/OUTCAR.static") ) ||
             aurostd::EFileExist( dirrunname.at(idVaspRun) + string("/OUTCAR.static") ) ||
             ((XHOST.ARUN_POSTPROCESS || AGL_data.postprocess) &&
-             ((aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/agl.LOCK")) ||
-              (aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/LOCK")) ||
-              (aurostd::FileExist( dirrunname.at(idVaspRun) + "/agl.LOCK")) ||
-              (aurostd::FileExist( dirrunname.at(idVaspRun) + "/LOCK")))) ) continue;
+             (
+              (aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/"+FileLockName)) || //CO20240409
+              //[CO20240409 - OBSOLETE](aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/agl.LOCK")) ||
+              (aurostd::FileExist( vaspRuns.at(idVaspRun).Directory + "/"+_AFLOWLOCK_)) ||
+              (aurostd::FileExist( dirrunname.at(idVaspRun) + "/"+FileLockName)) || //CO20240409
+              //[CO20240409 - OBSOLETE](aurostd::FileExist( dirrunname.at(idVaspRun) + "/agl.LOCK")) ||
+              (aurostd::FileExist( dirrunname.at(idVaspRun) + "/"+_AFLOWLOCK_)))) ) continue;
 
         // Check if structure is on list of failed runs to be skipped
         // If so, then skip generation and continue to next structure
