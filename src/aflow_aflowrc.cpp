@@ -527,7 +527,7 @@
 #define         POCC_ALL_SAMPLED_SUPERCELLS_FILE                  XHOST.adefault.getattachedscheme("POCC_ALL_SAMPLED_SUPERCELLS_FILE")
 #define AFLOWRC_POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE       string("without_sampled_structures_unique.out")  //YL20240419
 #define         POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE       XHOST.adefault.getattachedscheme("POCC_WITHOUT_SAMPLED_UNIQUE_SUPERCELLS_FILE")
-#define AFLOWRC_DEFAULT_POCC_SAMPLE_SEED                          123  //YL20240423
+#define AFLOWRC_DEFAULT_POCC_SAMPLE_SEED                          123  //YL20240423 later will be added to aflow.in
 #define         DEFAULT_POCC_SAMPLE_SEED                          XHOST.adefault.getattachedutype<int>("DEFAULT_POCC_SAMPLE_SEED")
 #define AFLOWRC_DEFAULT_POCC_WRITE_OUT_ALL_SAMPLED_SUPERCELLS     FALSE
 #define         DEFAULT_POCC_WRITE_OUT_ALL_SAMPLED_SUPERCELLS     XHOST.adefault.getattachedutype<bool>("DEFAULT_POCC_WRITE_OUT_ALL_SAMPLED_SUPERCELLS")
