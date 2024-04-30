@@ -3636,7 +3636,7 @@ namespace pocc {
     vector<int> current_config;
     //const vector<StructureConfiguration>& v_str_configs=p_str.v_str_configs;
     bool getNextSiteConfiguration(vector<int>& types_config);
-    //YL20240426 for the flag --pocc_sample_number to count until a given site_config_count
+    //YL20240426 for the flag --pocc_sample_number to count until site_config_count >= 100*pocc_sample_number
     unsigned long long int sample_number;  //YL20240426 
     unsigned long long int consider_configs_number;  //YL20240426
     if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER"))
@@ -3650,10 +3650,10 @@ namespace pocc {
           cerr <<  __AFLOW_FUNC__ << "v_str_configs.size() = " << v_str_configs.size() << endl;
        }
     }
-    //YL20240426 for the flag --pocc_sample_number to count until a given site_config_count
+    //YL20240426 for the flag --pocc_sample_number to count until site_config_count >= 100*pocc_sample_number
     for(uint str_config=0;str_config<v_str_configs.size();str_config++){
       str_config_permutations_count=1;
-      //cerr << __AFLOW_FUNC__ << "v_str_configs[str_config].site_configs.size() = " << v_str_configs[str_config].site_configs.size() << endl;
+      if(LDEBUG){cerr << __AFLOW_FUNC__ << "v_str_configs[str_config].site_configs.size() = " << v_str_configs[str_config].site_configs.size() << endl;}
       for(uint site=0;site<v_str_configs[str_config].site_configs.size();site++){
         //for(uint config=0;config<v_str_configs[site].size();config++){
         config_permutations_count=0;
@@ -3666,11 +3666,11 @@ namespace pocc {
         //}
         //str_config_permutations_count*=config_permutations_count;
         if(LDEBUG){cerr << __AFLOW_FUNC__ << "str_config_permutations = " << str_config_permutations_count << endl;}
-        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && str_config_permutations_count > consider_configs_number){break;} // YL20240426 when str_config_permutations_count meet consider_configs_number break the for loop
+        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && str_config_permutations_count >= consider_configs_number){break;} // YL20240426 when str_config_permutations_count meet consider_configs_number break the for loop
       }
       types_config_permutations_count+=str_config_permutations_count;
       if(LDEBUG){cerr << __AFLOW_FUNC__ << "types_config_permutations_count = " << types_config_permutations_count << endl;}
-      if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && types_config_permutations_count > consider_configs_number){break;} // YL20240426 when types_config_permutations_count meet consider_configs_number break for loop
+      if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && types_config_permutations_count >= consider_configs_number){break;} // YL20240426 when types_config_permutations_count meet consider_configs_number break for loop
     }
     if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && types_config_permutations_count < sample_number){
         message << "Permutation configurations=" << types_config_permutations_count <<". Please choose pocc_sample_number less than " << types_config_permutations_count << endl;
