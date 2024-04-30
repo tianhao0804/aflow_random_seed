@@ -4439,11 +4439,14 @@ namespace pocc {
           vpsc.push_back(psc);
           vv_types_config.push_back(v_types_config);
           site_config_index++;
-          if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && site_config_index==types_config_permutations_count){break;}//  YL20240427 stop counting when turn on pocc_sample_number and the site_config_index reach the pocc_sample_number
+          if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") && site_config_index==types_config_permutations_count){break;}//  YL20240427 stop counting when turn on pocc_sample_number and the site_config_index reach types_config_permutations_count(which >= 100*pocc_sample_number)
         }
         hnf_index++;
-        //cerr << "hnf_index" << hnf_index << endl;
-        //cerr << "site_config_index" << site_config_index << endl;
+        if(LDEBUG)
+        {
+           cerr << "hnf_index" << hnf_index << endl;
+           cerr << "site_config_index" << site_config_index << endl;
+        }
       }
       if(LDEBUG)
       {
@@ -4454,7 +4457,6 @@ namespace pocc {
          vector<unsigned long long int> selected_indices_set = pocc::FirstRandomSampling(hnf_count, types_config_permutations_count); //get random seed sampling selected derivitive config indices
          skip_config_num = types_config_permutations_count*hnf_count - selected_indices_set.size();   // calculate total amout of skipped configs
          vector<POccSuperCell> sampled_vpsc;
-         vector<POccUFFEnergyAnalyzer> sampled_v_energy_analyzer;
          vector<vector<vector<int>>> sampled_vv_types_config;
          if(LDEBUG)
          {
@@ -4467,7 +4469,7 @@ namespace pocc {
             sampled_vpsc.push_back(vpsc[selected_indices_set[i]]);
             sampled_vv_types_config.push_back(vv_types_config[selected_indices_set[i]]);
          }
-         vpsc = sampled_vpsc;
+         vpsc = sampled_vpsc; // replace the vpsc and vv_types_config by the sampled vpsc and vv_types_config for unique UFF calculations.
          vv_types_config = sampled_vv_types_config;
       }
       std::mutex m_save, m_job;
@@ -4513,16 +4515,7 @@ namespace pocc {
         // the first number sets the number of threads that are created overall (in this case one thread per CPU)
         pflow::updateProgressBar(0, vpsc.size(), *p_oss);
         xt.run(KBIN::get_NCPUS(m_kflags), fn, vpsc, v_energy_analyzer, vv_types_config, npsc_queue, m_save, m_job);
-        //
-        //YL20240426 for pocc_sample_number or pocc_sample_rate for unique structures screening
-        //if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE") || XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){
-           //vector<unsigned long long int> selected_indices = pocc::FirstRandomSampling(hnf_count, types_config_permutations_count, vpsc); //get random seed sampling selected derivitive config indices
-           //for(size_t i = 0; i < selected_indices.size(); i++){add2DerivativeStructuresList(vpsc[selected_indices[i]]);}
-           //skip_config_num = types_config_permutations_count*hnf_count - selected_indices.size();   // calculate total amout of skipped configs
-        //}else{
         for(size_t i = 0; i < vpsc.size(); i++){add2DerivativeStructuresList(vpsc[i]);}
-        //}
-        //YL20240426 for pocc_sample_rate or  pocc_sample_number for unique structures screening
       }
 
     }else{  //group theory approach
