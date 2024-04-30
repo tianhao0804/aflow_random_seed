@@ -4824,12 +4824,7 @@ namespace pocc {
         }
 
         total_degeneracy += skip_config_num;//add skipped config number to total_degeneracy for the check of if(total_permutations_count!=total_degeneracy)
-        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")){
-           l_supercell_sets =  pocc::SecondRandomSamplingWithRate(l_supercell_sets, hnf_count);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs with SecondRandomSamplingWithRate.
-        }
-        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){
-           l_supercell_sets =  pocc::SecondRandomSamplingWithNumber(l_supercell_sets);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs with SecondRandomSamplingWithNumber. 
-        }
+        l_supercell_sets =  pocc::SecondRandomSampling(l_supercell_sets);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs with SecondRandomSamplingWithRate.
     }
      //YL20240402 for SecondRandomSamplingWithRate
     if(total_permutations_count!=total_degeneracy){

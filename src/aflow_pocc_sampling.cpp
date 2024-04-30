@@ -169,9 +169,15 @@ namespace pocc {
          return selected_random_sampling_supercell_sets;
     }
 
-    std::list<pocc::POccSuperCellSet> SecondRandomSamplingWithNumber(std::list<pocc::POccSuperCellSet> l_supercell_sets){
+    std::list<pocc::POccSuperCellSet> SecondRandomSampling(std::list<pocc::POccSuperCellSet> l_supercell_sets){
         std::unordered_set<unsigned long long int> selected_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
-        unsigned long long int sample_number=aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0);
+        unsigned long long int sample_number;
+        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")){
+           double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
+           sample_number = static_cast<size_t>(l_supercell_sets.size() * sample_rate);
+        } 
+        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){sample_number = static_cast<size_t>(aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0));} // calculate total amount   of selected decoration permutation configurations for each derivative supperlattice
+
         int sample_seed = DEFAULT_POCC_SAMPLE_SEED;
         srand(sample_seed); //initial random seed sampling
         l_supercell_sets.sort();
