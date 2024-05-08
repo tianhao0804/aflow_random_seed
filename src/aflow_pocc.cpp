@@ -3637,8 +3637,8 @@ namespace pocc {
     //const vector<StructureConfiguration>& v_str_configs=p_str.v_str_configs;
     bool getNextSiteConfiguration(vector<int>& types_config);
     //YL20240426 for the flag --pocc_sample_number to count until site_config_count >= 100*pocc_sample_number
-    unsigned long long int sample_number;  //YL20240426 
-    unsigned long long int consider_configs_number;  //YL20240426
+    unsigned long long int sample_number=0;  //YL20240426 
+    unsigned long long int consider_configs_number=0;  //YL20240426
     if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER"))
     {
        sample_number=aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0); //get pocc sample number
