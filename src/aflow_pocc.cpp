@@ -3642,7 +3642,7 @@ namespace pocc {
     if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER"))
     {
        sample_number=aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0); //get pocc sample number
-       consider_configs_number = 100 * sample_number;  // considering 100*pocc_sample_number to generate random number
+       consider_configs_number = 100 * sample_number;  // considering 100*pocc_sample_number to generate random number, 100 is used to consider a large enough configurations to do unique UFF calculations which enables l_supercell_sets.size() > pocc_sample_number
        if(LDEBUG)
        {
           cerr << __AFLOW_FUNC__ << "sample_number = " << sample_number << endl;
