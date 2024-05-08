@@ -23,6 +23,8 @@
 
 namespace pocc {
     bool LDEBUG = (FALSE || _DEBUG_POCC_SAMPLE_ || XHOST.DEBUG);
+    bool XHOST_POCC_SAMPLE_RATE=XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE");
+    bool XHOST_POCC_SAMPLE_NUMBER=XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER");
     double setPOccSampleRate(const string& pocc_sample_rate_string, int sample_round){//give the warning message if --pocc_sample_rate format is wrong
         double pocc_sample_rate;
         stringstream message;
@@ -62,17 +64,17 @@ namespace pocc {
     vector<unsigned long long int> FirstRandomSampling(unsigned long long int hnf_count, unsigned long long int types_config_permutations_count){
          size_t sample_config_count;
          if(LDEBUG){
-             cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
-             cerr << __AFLOW_FUNC__ << "This is first random seed sampling for unique configuration calculations" << endl;
+             cerr << __AFLOW_FUNC__ << " This is a test message" << endl;
+             cerr << __AFLOW_FUNC__ << " This is first random seed sampling for unique configuration calculations" << endl;
          }
          int sample_seed = DEFAULT_POCC_SAMPLE_SEED;
          srand(sample_seed); //initial random seed sampling
-         if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")){
+         if(XHOST_POCC_SAMPLE_RATE){
              double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0);
              sample_config_count = static_cast<size_t>(types_config_permutations_count * sample_rate);
          } // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
-         if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){sample_config_count = static_cast<size_t>(aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0));} // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
-         if(LDEBUG){cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "sample_config_count" << sample_config_count << endl;}
+         if(XHOST_POCC_SAMPLE_NUMBER){sample_config_count = static_cast<size_t>(aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0));} // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
+         if(LDEBUG){cerr << __AFLOW_FUNC__ << " aflow_pocc_random_seed: " << "sample_config_count" << sample_config_count << endl;}
          std::unordered_set<unsigned long long int> selected_site_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
          while(selected_site_config_indices_set.size() < sample_config_count) {
              unsigned long long int index = rand() % types_config_permutations_count; //select permuation decoration configuration index
@@ -82,16 +84,16 @@ namespace pocc {
          sort(selected_site_config_indices.begin(), selected_site_config_indices.end());//set selected_indices to save sorted indices
          if(LDEBUG)
          {
-            cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
-            cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
+            cerr << __AFLOW_FUNC__ << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
+            cerr << __AFLOW_FUNC__ << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
          }
          if(LDEBUG){
             for(size_t i=0; i< selected_site_config_indices.size(); i++)
             {
-                cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
-                cerr << __AFLOW_FUNC__ << "Selected permutation configurations in each derivative superlattice: C" << selected_site_config_indices[i] << endl;
-                cerr << __AFLOW_FUNC__ << "sample_config_count" <<  sample_config_count << endl;
-                cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
+                cerr << __AFLOW_FUNC__ << " This is a test message" << endl;
+                cerr << __AFLOW_FUNC__ << " Selected permutation configurations in each derivative superlattice: C" << selected_site_config_indices[i] << endl;
+                cerr << __AFLOW_FUNC__ << " sample_config_count" <<  sample_config_count << endl;
+                cerr << __AFLOW_FUNC__ << "selected_site_config_indices.size: " << selected_site_config_indices.size() << endl;
             }
          }
          std::vector<unsigned long long int> selected_indices_set;
@@ -100,12 +102,12 @@ namespace pocc {
                  selected_indices_set.push_back(i * types_config_permutations_count + j);
                  if(LDEBUG)
                  {
-                    cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_indices_set.size: " << selected_indices_set.size() << endl;
-                    cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "i_j" << i << j  << endl;
+                    cerr << __AFLOW_FUNC__ << "selected_indices_set.size: " << selected_indices_set.size() << endl;
+                    cerr << __AFLOW_FUNC__ << "i_j = " << i << j  << endl;
                  }
              }
          }
-         if(LDEBUG){cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "size of selected_indices_set" << selected_indices_set.size() << endl;}
+         if(LDEBUG){cerr << __AFLOW_FUNC__ << "size of selected_indices_set = " << selected_indices_set.size() << endl;}
          return selected_indices_set;
     }
     
@@ -125,7 +127,7 @@ namespace pocc {
             }
         }
         if(LDEBUG){
-            cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
+            cerr << __AFLOW_FUNC__ << " This is a test message" << endl;
             cerr << __AFLOW_FUNC__ << " This is second random seed sampling for DFT calculations" << endl;
             cerr << __AFLOW_FUNC__ << " Random seed sampling rate is: " << 100*sample_rate << "%" << endl;
         } 
@@ -145,8 +147,8 @@ namespace pocc {
             size_t sample_config_count = static_cast<size_t>(ihnf_unique_supercell_num[i]*sample_rate); //calculate total amount of selected configurations for each superlattice
             if(LDEBUG)
             {
-               cerr << __AFLOW_FUNC__ << "ihnf_nique_supercell_num[" << i << "]" << ihnf_unique_supercell_num[i]<< endl;
-               cerr << __AFLOW_FUNC__ << "sample_config_count[" << i << "]"  << sample_config_count << endl;
+               cerr << __AFLOW_FUNC__ << " ihnf_nique_supercell_num[" << i << "] = " << ihnf_unique_supercell_num[i]<< endl;
+               cerr << __AFLOW_FUNC__ << " sample_config_count[" << i << "] = "  << sample_config_count << endl;
             }
             std::unordered_set<unsigned long long int> selected_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
             while(selected_config_indices_set.size() < sample_config_count) {
@@ -161,8 +163,8 @@ namespace pocc {
                 selected_random_sampling_supercell_sets.push_back(*it);//push back the selected supercell
                 if(LDEBUG){
                    pocc::POccSuperCell pscs=(*it).getSuperCell();
-                   cerr << __AFLOW_FUNC__ << " this is a test message" << endl;
-                   cerr << __AFLOW_FUNC__ << "Second sampling is: " << "H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;
+                   cerr << __AFLOW_FUNC__ << " This is a test message" << endl;
+                   cerr << __AFLOW_FUNC__ << " Second sampling is: " << "H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;
                 }
             }
          }
@@ -172,11 +174,11 @@ namespace pocc {
     std::list<pocc::POccSuperCellSet> SecondRandomSampling(std::list<pocc::POccSuperCellSet> l_supercell_sets){
         std::unordered_set<unsigned long long int> selected_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
         unsigned long long int sample_number;
-        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")){
+        if(XHOST_POCC_SAMPLE_RATE){
            double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
            sample_number = static_cast<size_t>(l_supercell_sets.size() * sample_rate);
         } 
-        if(XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER")){sample_number = static_cast<size_t>(aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0));} // calculate total amount   of selected decoration permutation configurations for each derivative supperlattice
+        if(XHOST_POCC_SAMPLE_NUMBER){sample_number = static_cast<size_t>(aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0));} // calculate total amount   of selected decoration permutation configurations for each derivative supperlattice
 
         int sample_seed = DEFAULT_POCC_SAMPLE_SEED;
         srand(sample_seed); //initial random seed sampling
@@ -187,7 +189,7 @@ namespace pocc {
         }
         std::vector<unsigned long long int> selected_config_indices(selected_config_indices_set.begin(), selected_config_indices_set.end());
         sort(selected_config_indices.begin(), selected_config_indices.end());//set selected_indices to save sorted indices
-        if(LDEBUG){cerr << __AFLOW_FUNC__ << "aflow_pocc_random_seed: " << "selected_config_indices.size: " << selected_config_indices.size() << endl;}
+        if(LDEBUG){cerr << __AFLOW_FUNC__ << " selected_config_indices.size: " << selected_config_indices.size() << endl;}
         std::list<pocc::POccSuperCellSet> selected_random_sampling_supercell_sets;
         for(size_t i = 0; i < sample_number; i++){
             std::list<pocc::POccSuperCellSet>::iterator it = l_supercell_sets.begin();
