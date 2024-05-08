@@ -22,8 +22,6 @@
 #define _DEBUG_POCC_SAMPLE_ false 
 
 namespace pocc {
-    bool XHOST_POCC_SAMPLE_RATE=XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE");
-    bool XHOST_POCC_SAMPLE_NUMBER=XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER");
 
     double POccCalculator::setPOccSampleRate(const string& pocc_sample_rate_string, int sample_round){//give the warning message if --pocc_sample_rate format is wrong
         double pocc_sample_rate=0.0;
@@ -64,9 +62,13 @@ namespace pocc {
     vector<unsigned long long int> POccCalculator::FirstRandomSampling(unsigned long long int hnf_count, unsigned long long int types_config_permutations_count){
          size_t sample_config_count=0;
          bool LDEBUG = (FALSE || _DEBUG_POCC_SAMPLE_ || XHOST.DEBUG);
-         if(LDEBUG){
+         bool XHOST_POCC_SAMPLE_RATE=XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE");
+         bool XHOST_POCC_SAMPLE_NUMBER=XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER");
+         if(true){
              cerr << __AFLOW_FUNC__ << " This is a test message" << endl;
              cerr << __AFLOW_FUNC__ << " This is first random seed sampling for unique configuration calculations" << endl;
+             cerr << __AFLOW_FUNC__ << " XHOST_POCC_SAMPLE_NUMBER = " << XHOST_POCC_SAMPLE_NUMBER << endl;
+             cerr << __AFLOW_FUNC__ << " XHOST_POCC_SAMPLE_RATE = " << XHOST_POCC_SAMPLE_RATE << endl;
          }
          int sample_seed = DEFAULT_POCC_SAMPLE_SEED;
          srand(sample_seed); //initial random seed sampling
@@ -177,6 +179,8 @@ namespace pocc {
     std::list<pocc::POccSuperCellSet> POccCalculator::SecondRandomSampling(std::list<pocc::POccSuperCellSet> l_supercell_sets){
         bool LDEBUG = (FALSE || _DEBUG_POCC_SAMPLE_ || XHOST.DEBUG);
         std::unordered_set<unsigned long long int> selected_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
+        bool XHOST_POCC_SAMPLE_RATE=XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE");
+        bool XHOST_POCC_SAMPLE_NUMBER=XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER");
         unsigned long long int sample_number;
         if(XHOST_POCC_SAMPLE_RATE){
            double sample_rate = setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
