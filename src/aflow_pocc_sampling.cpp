@@ -25,8 +25,8 @@ namespace pocc {
     bool XHOST_POCC_SAMPLE_RATE=XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE");
     bool XHOST_POCC_SAMPLE_NUMBER=XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER");
 
-    double setPOccSampleRate(const string& pocc_sample_rate_string, int sample_round){//give the warning message if --pocc_sample_rate format is wrong
-        double pocc_sample_rate;
+    double POccCalculator::setPOccSampleRate(const string& pocc_sample_rate_string, int sample_round){//give the warning message if --pocc_sample_rate format is wrong
+        double pocc_sample_rate=0.0;
         stringstream message;
         //if(pocc_sample_rate_string.empty()){
         //   message << "No POCC random seed sampling rate is found" << endl;
@@ -61,7 +61,7 @@ namespace pocc {
         return pocc_sample_rate;
     }
 
-    vector<unsigned long long int> FirstRandomSampling(unsigned long long int hnf_count, unsigned long long int types_config_permutations_count){
+    vector<unsigned long long int> POccCalculator::FirstRandomSampling(unsigned long long int hnf_count, unsigned long long int types_config_permutations_count){
          size_t sample_config_count;
          bool LDEBUG = (FALSE || _DEBUG_POCC_SAMPLE_ || XHOST.DEBUG);
          if(LDEBUG){
@@ -71,7 +71,7 @@ namespace pocc {
          int sample_seed = DEFAULT_POCC_SAMPLE_SEED;
          srand(sample_seed); //initial random seed sampling
          if(XHOST_POCC_SAMPLE_RATE){
-             double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0);
+             double sample_rate = setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0);
              sample_config_count = static_cast<size_t>(types_config_permutations_count * sample_rate);
          } // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
          if(XHOST_POCC_SAMPLE_NUMBER){sample_config_count = static_cast<size_t>(aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0));} // calculate total amount of selected decoration permutation configurations for each derivative supperlattice
@@ -112,9 +112,9 @@ namespace pocc {
          return selected_indices_set;
     }
     
-    std::list<pocc::POccSuperCellSet> SecondRandomSamplingWithRate(std::list<pocc::POccSuperCellSet> l_supercell_sets, unsigned long long int hnf_count){
+    std::list<pocc::POccSuperCellSet> POccCalculator::SecondRandomSamplingWithRate(std::list<pocc::POccSuperCellSet> l_supercell_sets, unsigned long long int hnf_count){
         bool LDEBUG = (FALSE || _DEBUG_POCC_SAMPLE_ || XHOST.DEBUG);
-        double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
+        double sample_rate = setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
         vector<unsigned long long int> ihnf_unique_supercell_num(hnf_count,0);
         l_supercell_sets.sort();
         for(unsigned long long int i=0;i<l_supercell_sets.size();i++) {
@@ -173,12 +173,12 @@ namespace pocc {
          return selected_random_sampling_supercell_sets;
     }
 
-    std::list<pocc::POccSuperCellSet> SecondRandomSampling(std::list<pocc::POccSuperCellSet> l_supercell_sets){
+    std::list<pocc::POccSuperCellSet> POccCalculator::SecondRandomSampling(std::list<pocc::POccSuperCellSet> l_supercell_sets){
         bool LDEBUG = (FALSE || _DEBUG_POCC_SAMPLE_ || XHOST.DEBUG);
         std::unordered_set<unsigned long long int> selected_config_indices_set; // unordered_set could auotmatically select unique index avoiding repetion and is cheaper than find
         unsigned long long int sample_number;
         if(XHOST_POCC_SAMPLE_RATE){
-           double sample_rate = pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
+           double sample_rate = setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),1);
            sample_number = static_cast<size_t>(l_supercell_sets.size() * sample_rate);
         } 
         if(XHOST_POCC_SAMPLE_NUMBER){sample_number = static_cast<size_t>(aurostd::string2utype<unsigned long long int>(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_NUMBER"),0));} // calculate total amount   of selected decoration permutation configurations for each derivative supperlattice

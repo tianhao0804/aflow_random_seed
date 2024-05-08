@@ -735,6 +735,11 @@ namespace pocc {
       void plotAvgDOSCAR(const xDOSCAR& xdos,double temperature,const string& directory=".") const;
       void writeResults() const;
       void writeResults(double temperature) const;
+      //YL20240508 for pocc_sampling
+      double setPOccSampleRate(const string& pocc_sample_rate_string, int sample_round);   
+      vector<unsigned long long int> FirstRandomSampling(unsigned long long int hnf_count, unsigned long long int types_config_permutations_count);
+      std::list<pocc::POccSuperCellSet> SecondRandomSamplingWithRate(std::list<pocc::POccSuperCellSet> l_supercell_sets, unsigned long long int hnf_count);
+      std::list<pocc::POccSuperCellSet> SecondRandomSampling(std::list<pocc::POccSuperCellSet> l_supercell_sets);
 
     private:
       //NECESSARY PRIVATE CLASS METHODS - START

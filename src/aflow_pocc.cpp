@@ -4458,7 +4458,7 @@ namespace pocc {
          cerr << __AFLOW_FUNC__ << " XHOST.vflag_pflow.flag(POCC_SAMPLE_NUMBER) = " << XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER") << endl;
       }
       if(XHOST_POCC_SAMPLE_RATE || XHOST_POCC_SAMPLE_NUMBER){
-         vector<unsigned long long int> selected_indices_set = pocc::FirstRandomSampling(hnf_count, types_config_permutations_count); //get random seed sampling selected derivitive config indices
+         vector<unsigned long long int> selected_indices_set = FirstRandomSampling(hnf_count, types_config_permutations_count); //get random seed sampling selected derivitive config indices
          skip_config_num = types_config_permutations_count*hnf_count - selected_indices_set.size();   // calculate total amout of skipped configs
          vector<POccSuperCell> sampled_vpsc;
          vector<vector<vector<int>>> sampled_vv_types_config;
@@ -4791,7 +4791,7 @@ namespace pocc {
                }
            }
            if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")) {
-              const string& pocc_sample_rate_string = aurostd::utype2string<double>(100*pocc::setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0),2) + "_percent_" ; //YL20240419 get first round sampling rate 
+              const string& pocc_sample_rate_string = aurostd::utype2string<double>(100*setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0),2) + "_percent_" ; //YL20240419 get first round sampling rate 
               aurostd::stringstream2file(all_supercells_ss,getOutputPath()+"/"+POCC_FILE_PREFIX+pocc_sample_rate_string+POCC_ALL_SAMPLED_SUPERCELLS_FILE);
            } 
            if(XHOST_POCC_SAMPLE_NUMBER) {
@@ -4828,7 +4828,7 @@ namespace pocc {
         }
 
         total_degeneracy += skip_config_num;//add skipped config number to total_degeneracy for the check of if(total_permutations_count!=total_degeneracy)
-        l_supercell_sets =  pocc::SecondRandomSampling(l_supercell_sets);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs with SecondRandomSamplingWithRate.
+        l_supercell_sets =  SecondRandomSampling(l_supercell_sets);//replace the second round random seed sampling config for DFT calculations to original l_supercell_sets all unique configs with SecondRandomSamplingWithRate.
     }
      //YL20240402 for SecondRandomSamplingWithRate
     if(total_permutations_count!=total_degeneracy){
