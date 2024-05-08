@@ -123,9 +123,10 @@ namespace pocc {
             pocc::POccSuperCell pscs=(*it).getSuperCell();
             ihnf_unique_supercell_num[pscs.m_hnf_index]++; // calculate unique decoration configurations for each superlattices and saved in ihnf_unique_supercell_num
             if(LDEBUG){
-               cerr << __AFLOW_FUNC__ << "hnf_index: " << pscs.m_hnf_index << endl;
-               cerr << __AFLOW_FUNC__ << "hnf_index: " <<  pscs.m_hnf_index << "hnf_unique_num: " << ihnf_unique_supercell_num[pscs.m_hnf_index] << endl;
-               cerr << __AFLOW_FUNC__ << "H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;
+               cerr << __AFLOW_FUNC__ << " hnf_index: " << pscs.m_hnf_index << endl;
+               cerr << __AFLOW_FUNC__ << " hnf_index: " <<  pscs.m_hnf_index << " hnf_unique_num: " << ihnf_unique_supercell_num[pscs.m_hnf_index] << endl;
+
+               cerr << __AFLOW_FUNC__ << " H" << pscs.m_hnf_index << "C" << pscs.m_site_config_index << endl;
             }
         }
         if(LDEBUG){

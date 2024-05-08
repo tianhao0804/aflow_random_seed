@@ -4791,7 +4791,7 @@ namespace pocc {
                    all_supercells_ss << AFLOWIN_SEPARATION_LINE << endl;
                }
            }
-           if(XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE")) {
+           if(XHOST_POCC_SAMPLE_RATE) {
               const string& pocc_sample_rate_string = aurostd::utype2string<double>(100*setPOccSampleRate(XHOST.vflag_pflow.getattachedscheme("POCC_SAMPLE_RATE"),0),2) + "_percent_" ; //YL20240419 get first round sampling rate 
               aurostd::stringstream2file(all_supercells_ss,getOutputPath()+"/"+POCC_FILE_PREFIX+pocc_sample_rate_string+POCC_ALL_SAMPLED_SUPERCELLS_FILE);
            } 
