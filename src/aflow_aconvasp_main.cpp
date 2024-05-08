@@ -1044,6 +1044,7 @@ uint PflowARGs(vector<string> &argv,vector<string> &cmds,aurostd::xoption &vpflo
   // [OBSOLETE]            (aurostd::args2attachedflag(argv,cmds,"--proto_icsd=")));                 // --proto_icsd=Gd1Mn2Si2_ICSD_54947
   // [OBSOLETE] vpflow.flag("PROTO_AFLOW",(aurostd::args2attachedflag(argv,cmds,"--aflow_proto=")) ||   // --aflow_proto=123:A:B:C ..
   // [OBSOLETE]            (aurostd::args2attachedflag(argv,cmds,"--aflow_proto_icsd=")));         // --aflow_proto_icsd=Gd1Mn2Si2_ICSD_54947
+
   vpflow.args2addattachedscheme(argv,cmds,"PROTO","--proto=|--proto_icsd=","");                                                    // --proto=123:A:B:C --proto_icsd=Gd1Mn2Si2_ICSD_54947
   vpflow.args2addattachedscheme(argv,cmds,"PARAMS","--params=|--parameters=","");                                                  // --proto=123:A:B:C --proto_icsd=Gd1Mn2Si2_ICSD_54947
   vpflow.args2addattachedscheme(argv,cmds,"POCC_PARAMS","--pocc_params=","");                                                      // --pocc_params=S0-1xC_S1-0.5xE-0.5xF_S2-0.3333xA-0.3333xB-0.3333xD
