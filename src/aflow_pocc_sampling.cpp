@@ -62,7 +62,7 @@ namespace pocc {
     }
 
     vector<unsigned long long int> POccCalculator::FirstRandomSampling(unsigned long long int hnf_count, unsigned long long int types_config_permutations_count){
-         size_t sample_config_count;
+         size_t sample_config_count=0;
          bool LDEBUG = (FALSE || _DEBUG_POCC_SAMPLE_ || XHOST.DEBUG);
          if(LDEBUG){
              cerr << __AFLOW_FUNC__ << " This is a test message" << endl;
