@@ -4423,6 +4423,13 @@ namespace pocc {
     bool XHOST_POCC_SAMPLE_NUMBER=XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER");
     bool XHOST_POCC_SAMPLE_RATE=XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE");
     //YL20240508
+    
+    //T20250606 add sampling flag check to skip expensive file writing operations when using sampling
+    if(XHOST_POCC_SAMPLE_NUMBER || XHOST_POCC_SAMPLE_RATE) {
+      m_p_flags.flag("POCC_SKIP_WRITING_FILES", TRUE); //automatically set skip writing files flag for sampling mode
+      message << "Sampling mode detected: automatically enabling --pocc_skip_writing_files to improve performance";
+      pflow::logger(__AFLOW_FILE__,__AFLOW_FUNC__,message,m_aflags,*p_FileMESSAGE,*p_oss,_LOGGER_NOTICE_);
+    }
 
     if(struct_gen_algo=="UFF"){
       POccSuperCell psc;
@@ -4864,7 +4871,9 @@ namespace pocc {
       aurostd::stringstream2file(all_hnf_mat_ss,getOutputPath()+"/"+POCC_FILE_PREFIX+POCC_ALL_HNF_MATRICES_FILE);
     }
 
-    if(true && !m_aflags.Directory.empty() && !m_p_flags.flag("POCC_SKIP_WRITING_FILES")){ //move me so it runs whenever pocc runs (even post-processing)
+    bool XHOST_POCC_SAMPLE_RATE_SKIP=XHOST.vflag_pflow.flag("POCC_SAMPLE_RATE"); //T20250606 define here to skip writing site_configurations.out when turn on pocc sampling
+    bool XHOST_POCC_SAMPLE_NUMBER_SKIP=XHOST.vflag_pflow.flag("POCC_SAMPLE_NUMBER"); //T20250606 define here to skip writing site_configurations.out when turn on pocc sampling
+    if(true && !m_aflags.Directory.empty() && !m_p_flags.flag("POCC_SKIP_WRITING_FILES") && !XHOST_POCC_SAMPLE_RATE_SKIP && !XHOST_POCC_SAMPLE_NUMBER_SKIP){ //move me so it runs whenever pocc runs (even post-processing) //T20250606 skip writing site_configurations.out when turn on pocc sampling to avoid long time waiting
       message << "Writing out " << POCC_ALL_SITE_CONFIGURATIONS_FILE;pflow::logger(__AFLOW_FILE__,__AFLOW_FUNC__,message,m_aflags,*p_FileMESSAGE,*p_oss,_LOGGER_MESSAGE_);
       stringstream all_site_configs_ss;
       resetSiteConfigurations();
@@ -4897,7 +4906,7 @@ namespace pocc {
       aurostd::stringstream2file(all_site_configs_ss,getOutputPath()+"/"+POCC_FILE_PREFIX+POCC_ALL_SITE_CONFIGURATIONS_FILE);
     }
     
-    if(!XHOST_POCC_SAMPLE_RATE && !XHOST_POCC_SAMPLE_NUMBER){ // YL20240419 only when turn off pocc sampling write aflow.pocc.structures_all.out.xz file
+    if(!XHOST_POCC_SAMPLE_RATE_SKIP && !XHOST_POCC_SAMPLE_NUMBER_SKIP){ // YL20240419 only when turn off pocc sampling write aflow.pocc.structures_all.out.xz file
        if(DEFAULT_POCC_WRITE_OUT_ALL_SUPERCELLS && !m_aflags.Directory.empty() && !m_p_flags.flag("POCC_SKIP_WRITING_FILES")){
          message << "Writing out " << POCC_ALL_SUPERCELLS_FILE << ". Please be patient.";
          pflow::logger(__AFLOW_FILE__,__AFLOW_FUNC__,message,m_aflags,*p_FileMESSAGE,*p_oss,_LOGGER_MESSAGE_);
